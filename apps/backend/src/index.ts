@@ -14,7 +14,8 @@ import purchasesRouter from './routes/purchases';
 import goalsRouter from './routes/goals';
 import snapshotsRouter from './routes/snapshots';
 import summaryRouter from './routes/summary';
-import treeRouter from './routes/tree';
+const app = express();
+const PORT = process.env.PORT || 3001;
 
 // ─── Middleware Manual CORS ────────────────────────────────────────────────────
 app.use((req: Request, res: Response, next: NextFunction) => {
