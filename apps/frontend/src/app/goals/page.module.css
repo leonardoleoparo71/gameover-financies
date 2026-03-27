@@ -1,0 +1,39 @@
+.loading { display: flex; justify-content: center; padding: var(--space-16); }
+.spinner { width: 32px; height: 32px; border: 2px solid var(--border-default); border-top-color: var(--brand-primary); border-radius: 50%; animation: spin 750ms linear infinite; }
+
+.savedBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-6);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.bannerLabel { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: var(--space-1); }
+.bannerValue { font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 800; }
+
+.goalCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  transition: all var(--transition-base);
+}
+.goalCard:hover { border-color: var(--border-default); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+.goalHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2); }
+.goalName { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+.goalTarget { font-size: 0.85rem; color: var(--text-muted); }
+
+.progressInfo { display: flex; align-items: baseline; gap: var(--space-2); }
+.progressPct { font-family: 'Outfit', sans-serif; font-size: 1.75rem; font-weight: 800; line-height: 1; }
+.progressSaved { font-size: 0.8rem; color: var(--text-muted); }
+
+.goalFooter { display: flex; align-items: center; justify-content: space-between; margin-top: var(--space-1); }

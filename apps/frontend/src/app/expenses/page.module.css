@@ -1,0 +1,55 @@
+.loading { display: flex; justify-content: center; padding: var(--space-16); }
+.spinner { width: 32px; height: 32px; border: 2px solid var(--border-default); border-top-color: var(--brand-primary); border-radius: 50%; animation: spin 750ms linear infinite; }
+
+.summaryRow { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-bottom: var(--space-5); }
+
+.summaryCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.summaryLabel { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+.summaryValue { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; }
+
+.tabs { display: flex; gap: var(--space-2); margin-bottom: var(--space-5); }
+
+.tab {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+.tab:hover { background: var(--bg-elevated); color: var(--text-primary); }
+.tabActive { background: rgba(99,102,241,0.15); color: var(--brand-primary-light); border-color: rgba(99,102,241,0.4); }
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  transition: background var(--transition-fast);
+  gap: var(--space-3);
+}
+.row:hover { background: var(--bg-elevated); }
+
+.rowLeft { display: flex; align-items: center; gap: var(--space-4); flex: 1; min-width: 0; }
+.rowDot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.rowName { font-size: 0.9rem; font-weight: 500; color: var(--text-primary); }
+.rowMeta { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-1); flex-wrap: wrap; }
+
+.rowRight { display: flex; align-items: center; gap: var(--space-3); flex-shrink: 0; }
+.rowAmount { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; }
+
+@media (max-width: 768px) {
+  .summaryRow { grid-template-columns: 1fr; }
+}

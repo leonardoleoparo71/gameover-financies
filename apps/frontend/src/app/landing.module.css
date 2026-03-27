@@ -1,0 +1,170 @@
+.landingWrapper {
+  min-height: 100vh;
+  width: 100vw;
+  /* Dark, cinematic blue-green background simulating the RAGNAROK atmosphere */
+  background: 
+    linear-gradient(to bottom, rgba(5, 14, 20, 0.4) 0%, rgba(5, 14, 20, 0.8) 50%, #050e14 100%),
+    radial-gradient(circle at 70% 40%, rgba(20, 160, 200, 0.3) 0%, transparent 50%),
+    #0a192f;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  overflow: hidden;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 80px;
+  position: relative;
+  z-index: 10;
+}
+
+.navLinks {
+  display: flex;
+  gap: 32px;
+}
+
+.navLink {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.navLink:hover {
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+.navLogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
+}
+
+.heroSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end; /* Aligning content to the right as in the Ragnarok reference */
+  padding-right: 15%; /* Spacing from the right edge */
+  text-align: right;
+  z-index: 5;
+  margin-top: -80px; /* Offset the navbar height */
+}
+
+.heroTitle {
+  font-size: 8rem;
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -1px;
+  margin: 0 0 24px 0;
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.heroSubtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 500px;
+  margin-bottom: 40px;
+  letter-spacing: 0.02em;
+}
+
+.heroActions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+.btnPrimary {
+  background: white;
+  color: #050e14;
+  padding: 16px 32px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btnPrimary:hover {
+  background: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(255,255,255,0.2);
+}
+
+.btnOutline {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 16px 32px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btnOutline:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: white;
+}
+
+/* Make it responsive */
+@media (max-width: 1024px) {
+  .heroSection {
+    padding-right: 10%;
+  }
+  .heroTitle {
+    font-size: 6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 24px;
+    flex-direction: column-reverse;
+    gap: 16px;
+  }
+  .heroSection {
+    align-items: center;
+    text-align: center;
+    padding: 0 24px;
+  }
+  .heroTitle {
+    font-size: 4rem;
+  }
+  .heroSubtitle {
+    max-width: 100%;
+  }
+  .heroActions {
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+  }
+  .btnPrimary, .btnOutline {
+    width: 100%;
+    text-align: center;
+  }
+}

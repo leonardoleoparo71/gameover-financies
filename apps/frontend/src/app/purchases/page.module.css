@@ -1,0 +1,49 @@
+.loading { display: flex; justify-content: center; padding: var(--space-16); }
+.spinner { width: 32px; height: 32px; border: 2px solid var(--border-default); border-top-color: var(--brand-primary); border-radius: 50%; animation: spin 750ms linear infinite; }
+
+.purchaseCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-base);
+  position: relative;
+}
+.purchaseCard:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--border-default); }
+
+.cardImg {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+  background: var(--bg-elevated);
+}
+
+.cardBody { flex: 1; padding: var(--space-5); }
+.cardName { font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2); }
+.cardDesc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: var(--space-3); }
+.cardValue {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--brand-accent);
+  margin-bottom: var(--space-3);
+}
+.cardLink {
+  font-size: 0.8rem;
+  color: var(--brand-primary-light);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color var(--transition-fast);
+}
+.cardLink:hover { color: var(--brand-primary); }
+
+.cardActions {
+  display: flex;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  justify-content: flex-end;
+}
