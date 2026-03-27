@@ -15,7 +15,7 @@ async function request<T>(
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: 'Erro desconhecido' }));
-    throw new Error(err.error || `Erro ${res.status}`);
+    throw new Error(err.message || err.error || `Erro ${res.status}`);
   }
 
   return res.json();
