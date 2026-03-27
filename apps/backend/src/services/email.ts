@@ -24,17 +24,19 @@ export async function sendWelcomeEmail(to: string, name: string) {
     const t = await initTransporter();
     
     const info = await t.sendMail({
-      from: '"FinPlan App" <no-reply@finplan.test>',
+      from: '"GameOver App" <no-reply@gameover.test>',
       to,
-      subject: 'Bem-vindo(a) ao FinPlan! 🎉',
+      subject: 'Bem-vindo(a) ao GameOver! 🎮🔨',
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-          <h2 style="color: #6366f1;">Olá, ${name}!</h2>
-          <p>Sua conta no <strong>FinPlan</strong> foi criada com sucesso.</p>
-          <p>Estamos muito felizes em ter você conosco. Agora você pode controlar suas finanças, definir metas e planejar seu futuro usando nossa Árvore de Planejamento visual.</p>
-          <br/>
-          <p>Seja bem-vindo(a)!</p>
-          <p>Atenciosamente, <br/>Equipe FinPlan</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0f1117; color: #ffffff; padding: 20px; border-radius: 10px; border: 1px solid #6366f1;">
+          <h2 style="color: #6366f1; text-align: center;">Olá, ${name}!</h2>
+          <p style="font-size: 16px;">Sua conta no <strong style="color: #6366f1;">GameOver</strong> foi criada com sucesso.</p>
+          <p style="font-size: 16px;">A era do planejamento financeiro épico começou. Agora você tem o poder do martelo para destruir suas dívidas e construir seu império!</p>
+          <div style="text-align: center; margin: 30px 0;">
+             <span style="font-size: 50px;">🔨</span>
+          </div>
+          <p style="font-size: 14px; color: #9ca3af; text-align: center;">Seja bem-vindo(a) ao próximo nível!</p>
+          <p style="font-size: 14px; color: #9ca3af; text-align: center;">Atenciosamente, <br/>Equipe GameOver</p>
         </div>
       `
     });

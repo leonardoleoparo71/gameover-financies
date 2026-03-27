@@ -63,7 +63,12 @@ app.use((_req, res) => {
 // ─── Global Error Handler ─────────────────────────────────────────────────────
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Unhandled Error:', err);
-  res.status(500).json({ error: 'Erro interno do servidor', details: process.env.NODE_ENV === 'development' ? err.message : undefined });
+  // Temporariamente exibindo detalhes no 500 para diagnosticar o erro no Render
+  res.status(500).json({ 
+    error: 'Erro interno do servidor', 
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined 
+  });
 });
 
 // ─── Start server ─────────────────────────────────────────────────────────────
