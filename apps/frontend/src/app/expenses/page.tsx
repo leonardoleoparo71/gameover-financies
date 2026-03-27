@@ -28,7 +28,7 @@ function fmtDate(d: string) {
 
 interface FormData {
   type: 'income' | 'expense';
-  category: string;
+  category: 'essential' | 'leisure' | 'investment' | 'future_purchase';
   name: string;
   amount: string;
   date: string;
@@ -222,7 +222,7 @@ export default function ExpensesPage() {
                 </div>
                 <div className="form-group">
                   <label className="form-label">Categoria</label>
-                  <select className="select" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
+                  <select className="select" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value as any }))}>
                     {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                   </select>
                 </div>
