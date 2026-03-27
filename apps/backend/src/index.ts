@@ -1,7 +1,13 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
+import 'express-async-errors';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import 'dotenv/config';
+
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL ERROR: JWT_SECRET environment variable is not set.');
+  process.exit(1);
+}
 
 import authRouter from './routes/auth';
 import transactionsRouter from './routes/transactions';
@@ -44,6 +50,12 @@ app.get('/health', (_req, res) => {
 // ─── 404 handler ──────────────────────────────────────────────────────────────
 app.use((_req, res) => {
   res.status(404).json({ error: 'Rota não encontrada' });
+});
+
+// ─── Global Error Handler ─────────────────────────────────────────────────────
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  console.error('Unhandled Error:', err);
+  res.status(500).json({ error: 'Erro interno do servidor', details: process.env.NODE_ENV === 'development' ? err.message : undefined });
 });
 
 // ─── Start server ─────────────────────────────────────────────────────────────
