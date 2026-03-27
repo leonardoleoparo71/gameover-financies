@@ -5,9 +5,8 @@ import cors from 'cors';
 import 'dotenv/config';
 
 if (!process.env.JWT_SECRET) {
-  console.error('FATAL ERROR: JWT_SECRET environment variable is not set.');
-  process.exit(1);
-}
+  console.warn('WARNING: JWT_SECRET environment variable is not set. Using a temporary secret for now (NOT SECURE!).');
+}const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_gameover';
 
 import authRouter from './routes/auth';
 import transactionsRouter from './routes/transactions';
@@ -17,19 +16,26 @@ import snapshotsRouter from './routes/snapshots';
 import summaryRouter from './routes/summary';
 import treeRouter from './routes/tree';
 
-const app = express();
-const PORT = process.env.PORT || 3001;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+// ─── Middleware Manual CORS ────────────────────────────────────────────────────
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const origin = req.headers.origin;
+  
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
 
-// ─── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors({
-  origin: (origin, callback) => {
-    // Para facilitar o deploy inicial e comportar múltiplos domínios da Vercel
-    // Retornamos 'true' para permitir qualquer origem que chegue até aqui
-    callback(null, true);
-  },
-  credentials: true,
-}));
+  // Tratar requisição de pré-fluxo (Preflight)
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
 app.use(express.json());
 app.use(cookieParser());
 

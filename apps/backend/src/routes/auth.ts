@@ -33,7 +33,7 @@ router.post('/register', async (req: Request, res: Response) => {
     select: { id: true, name: true, email: true, createdAt: true },
   });
 
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
+  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'fallback_secret_gameover', {
     expiresIn: '30d',
   });
 
