@@ -1,15 +1,18 @@
 .sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
   position: fixed;
   left: 0;
   top: 0;
-  bottom: 0;
-  width: var(--sidebar-width);
-  background: var(--bg-surface);
-  border-right: 1px solid var(--border-subtle);
+  background: rgba(10, 12, 18, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-right: 1px solid var(--glass-border);
   display: flex;
   flex-direction: column;
-  z-index: 50;
-  padding: var(--space-5) 0;
+  z-index: 1000;
+  color: var(--text-primary);
+  transition: all var(--transition-base);
 }
 
 .logo {
@@ -46,24 +49,25 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
+  padding: 14px 20px;
+  color: var(--text-secondary);
+  text-decoration: none;
   border-radius: var(--radius-md);
-  color: var(--text-muted);
-  font-size: 0.875rem;
+  margin: 4px 12px;
+  font-size: 0.9rem;
   font-weight: 500;
   transition: all var(--transition-fast);
-  text-decoration: none;
-  position: relative;
 }
 
 .navItem:hover {
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
 }
 
 .navItem.active {
-  background: rgba(99, 102, 241, 0.15);
-  color: var(--brand-primary-light);
+  background: var(--brand-primary);
+  color: white;
+  box-shadow: var(--shadow-glow);
 }
 
 .navItem.active::before {

@@ -16,15 +16,15 @@ function fmt(n: number) {
   return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-function StatCard({ label, value, icon, color, sub }: {
-  label: string; value: string; icon: string; color?: string; sub?: string;
+function StatCard({ label, value, icon, className, sub }: {
+  label: string; value: string; icon: string; className?: string; sub?: string;
 }) {
   return (
-    <div className="stat-card" style={{ borderTop: color ? `3px solid ${color}` : undefined }}>
+    <div className={`stat-card ${className || ''}`}>
       <span className="stat-icon">{icon}</span>
       <div className="stat-label">{label}</div>
-      <div className="stat-value" style={{ color }}>{value}</div>
-      {sub && <div className="stat-delta" style={{ color: 'var(--text-muted)' }}>{sub}</div>}
+      <div className="stat-value">{value}</div>
+      {sub && <div className="stat-delta">{sub}</div>}
     </div>
   );
 }
@@ -110,27 +110,27 @@ export default function DashboardPage() {
           label="Renda do Mês"
           value={fmt(summary?.totalIncome ?? 0)}
           icon="💰"
-          color="var(--brand-secondary)"
+          className="income"
         />
         <StatCard
           label="Total de Gastos"
           value={fmt(summary?.totalExpense ?? 0)}
           icon="💸"
-          color="var(--brand-danger)"
+          className="expense"
           sub={`${summary?.spendRate?.toFixed(1) ?? 0}% da renda`}
         />
         <StatCard
           label="Valor Guardado"
           value={fmt(summary?.saved ?? 0)}
           icon="🏦"
-          color={(summary?.saved ?? 0) >= 0 ? 'var(--brand-secondary)' : 'var(--brand-danger)'}
+          className={(summary?.saved ?? 0) >= 0 ? 'income' : 'expense'}
           sub={`${summary?.savingsRate?.toFixed(1) ?? 0}% da renda`}
         />
         <StatCard
           label="Compras Futuras"
           value={fmt(summary?.totalPurchasesCost ?? 0)}
           icon="🛒"
-          color="var(--brand-accent)"
+          className="goal"
           sub="Total planejado"
         />
       </div>

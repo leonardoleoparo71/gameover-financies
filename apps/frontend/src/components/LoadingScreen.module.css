@@ -4,12 +4,12 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #000;
+  background: #000000;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
-  font-family: 'Inter', sans-serif;
+  z-index: 99999;
+  font-family: 'Outfit', sans-serif;
 }
 
 .logoWrapper {
@@ -20,15 +20,14 @@
 }
 
 .circle {
-  width: 120px;
-  height: 120px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  width: 140px;
+  height: 140px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  overflow: hidden;
 }
 
 .circle::before {
@@ -45,18 +44,18 @@
 }
 
 .mjolnir {
-  width: 60px;
-  height: 60px;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
-  animation: pulse 2s ease-in-out infinite;
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
+  animation: pulse 2.5s ease-in-out infinite;
 }
 
 .progressText {
   color: white;
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  font-weight: 500;
-  opacity: 0.8;
+  font-size: 0.85rem;
+  letter-spacing: 0.3em;
+  font-weight: 600;
+  margin-top: 10px;
 }
 
 @keyframes spin {

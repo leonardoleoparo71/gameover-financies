@@ -13,11 +13,22 @@
   --brand-danger-light: #fee2e2;
 
   /* Background layers */
-  --bg-base: #0f1117;
-  --bg-surface: #16181f;
-  --bg-card: #1e2029;
-  --bg-elevated: #252836;
-  --bg-hover: #2d3044;
+  --bg-base: #05070a;
+  --bg-surface: #0a0c12;
+  --bg-card: rgba(30, 32, 41, 0.4);
+  --bg-elevated: rgba(45, 48, 68, 0.4);
+  --bg-hover: rgba(60, 64, 88, 0.5);
+  
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(12px);
+
+  /* Gradients */
+  --grad-primary: linear-gradient(135deg, #6366f1 0%, #a5b4fc 100%);
+  --grad-emerald: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  --grad-rose: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);
+  --grad-sunset: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
 
   /* Text */
   --text-primary: #f1f3f9;
@@ -128,14 +139,20 @@ a:hover { color: var(--brand-primary); }
 
 /* ─── Cards ──────────────────────────────────────────────────────────────────── */
 .card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
-  transition: border-color var(--transition-base), transform var(--transition-base), box-shadow var(--transition-base);
+  transition: all var(--transition-base);
 }
 
-.card:hover { border-color: var(--border-default); box-shadow: var(--shadow-md); }
+.card:hover { 
+  border-color: rgba(255, 255, 255, 0.15); 
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
 
 .card-header {
   display: flex;
@@ -156,8 +173,10 @@ a:hover { color: var(--brand-primary); }
 
 /* ─── Stat Cards ─────────────────────────────────────────────────────────────── */
 .stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   padding: var(--space-5) var(--space-6);
   position: relative;
@@ -165,20 +184,27 @@ a:hover { color: var(--brand-primary); }
   transition: all var(--transition-base);
 }
 
-.stat-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
-  pointer-events: none;
+.stat-card:hover { 
+  transform: translateY(-4px); 
+  box-shadow: var(--shadow-lg); 
+  border-color: rgba(255, 255, 255, 0.2); 
 }
 
-.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border-default); }
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: var(--card-accent, var(--brand-primary));
+}
 
-.stat-card .stat-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: var(--space-2); }
-.stat-card .stat-value { font-family: 'Outfit', sans-serif; font-size: 1.75rem; font-weight: 800; color: var(--text-primary); }
-.stat-card .stat-delta { font-size: 0.8rem; margin-top: var(--space-1); display: flex; align-items: center; gap: 4px; }
-.stat-card .stat-icon { position: absolute; right: var(--space-5); top: 50%; transform: translateY(-50%); font-size: 2rem; opacity: 0.12; }
+.stat-card.income { --card-accent: var(--brand-secondary); }
+.stat-card.expense { --card-accent: var(--brand-danger); }
+.stat-card.goal { --card-accent: var(--brand-accent); }
+
+.stat-card .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2); }
+.stat-card .stat-value { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+.stat-card .stat-delta { font-size: 0.8rem; margin-top: var(--space-1); display: flex; align-items: center; gap: 4px; font-weight: 600; }
+.stat-card .stat-icon { position: absolute; right: var(--space-5); bottom: var(--space-5); font-size: 2.5rem; opacity: 0.08; filter: grayscale(1) invert(1); }
 
 /* ─── Buttons ────────────────────────────────────────────────────────────────── */
 .btn {
