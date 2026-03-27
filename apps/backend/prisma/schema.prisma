@@ -1,4 +1,4 @@
-// Prisma Schema for FinPlan
+// Prisma Schema for GameOver
 // Run: npx prisma migrate dev --name init
 
 generator client {

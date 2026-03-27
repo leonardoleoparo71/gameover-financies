@@ -69,7 +69,7 @@ export default function DashboardPage() {
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`FinPlan_Resumo_${summary?.month}_${summary?.year}.pdf`);
+      pdf.save(`GameOver_Resumo_${summary?.month}_${summary?.year}.pdf`);
     } catch (e) {
       alert('Erro ao exportar PDF');
     } finally {

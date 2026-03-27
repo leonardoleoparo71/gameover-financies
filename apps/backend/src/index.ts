@@ -63,17 +63,15 @@ app.use((_req, res) => {
 // ─── Global Error Handler ─────────────────────────────────────────────────────
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Unhandled Error:', err);
-  // Temporariamente exibindo detalhes no 500 para diagnosticar o erro no Render
   res.status(500).json({ 
     error: 'Erro interno do servidor', 
-    message: err.message,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined 
+    details: process.env.NODE_ENV === 'development' ? err.message : undefined 
   });
 });
 
 // ─── Start server ─────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`🚀 FinPlan API running on http://localhost:${PORT}`);
+  console.log(`🚀 GameOver API running on http://localhost:${PORT}`);
 });
 
 export default app;
