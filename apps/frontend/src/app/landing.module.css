@@ -1,11 +1,9 @@
 .landingWrapper {
   min-height: 100vh;
   width: 100vw;
-  /* Dark, cinematic blue-green background simulating the RAGNAROK atmosphere */
   background: 
-    linear-gradient(to bottom, rgba(5, 14, 20, 0.4) 0%, rgba(5, 14, 20, 0.8) 50%, #050e14 100%),
-    radial-gradient(circle at 70% 40%, rgba(20, 160, 200, 0.3) 0%, transparent 50%),
-    #0a192f;
+    linear-gradient(to right, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 40%, rgba(0, 0, 0, 0.8) 100%),
+    url('/hero-bg.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -68,12 +66,12 @@
 .heroTitle {
   font-size: 8rem;
   font-weight: 900;
-  line-height: 0.9;
-  letter-spacing: -1px;
-  margin: 0 0 24px 0;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  margin: 0 0 16px 0;
   color: white;
   font-family: 'Outfit', sans-serif;
-  text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  text-transform: uppercase;
 }
 
 .heroSubtitle {

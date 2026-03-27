@@ -11,7 +11,7 @@ import { api, TreeNode } from '@/lib/api';
 import styles from './page.module.css';
 
 interface FormData {
-  title: string; description: string; status: 'pending'|'in_progress'|'done'; color: string; date: string; imageUrl: string; parentId: string;
+  title: string; description: string; status: 'pending' | 'in_progress' | 'done'; color: string; date: string; imageUrl: string; parentId: string;
 }
 const emptyForm: FormData = { title: '', description: '', status: 'pending', color: '', date: '', imageUrl: '', parentId: '' };
 
@@ -87,8 +87,8 @@ export default function PlanningPage() {
 
       setNodes(rfNodes);
       setEdges(rfEdges);
-    } catch {/**/} finally { setLoading(false); }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    } catch {/**/ } finally { setLoading(false); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => { load(); }, [load]);
@@ -103,7 +103,7 @@ export default function PlanningPage() {
   }, [load]);
 
   const onNodeDragStop = useCallback(async (_: any, node: Node) => {
-    try { await api.updateNode(node.id, { positionX: node.position.x, positionY: node.position.y }); } catch {/**/}
+    try { await api.updateNode(node.id, { positionX: node.position.x, positionY: node.position.y }); } catch {/**/ }
   }, []);
 
   const openCreate = () => { setEditing(null); setForm(emptyForm); setError(''); setShowModal(true); };
@@ -170,7 +170,7 @@ export default function PlanningPage() {
         <button className="btn btn-primary" onClick={openCreate}>+ Novo Nó</button>
       </div>
 
-      <div 
+      <div
         style={{ flex: 1, border: '1px solid var(--border-default)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', background: 'var(--bg-card)' }}
         onKeyDown={handleKeyDown}
         tabIndex={0}
@@ -205,28 +205,28 @@ export default function PlanningPage() {
                 <input className="input" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
               </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-                  <div className="form-group">
-                    <label className="form-label">Status</label>
-                    <select className="select" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value as any }))}>
-                      {Object.entries(STATUS_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Cor (Opcional)</label>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                      <input type="color" className="input" style={{ width: '50px', padding: '0 4px', height: '40px' }} value={form.color || '#6366f1'} onChange={e => setForm(f => ({ ...f, color: e.target.value }))} />
-                      {form.color && (
-                        <button type="button" className="btn btn-ghost btn-sm" onClick={() => setForm(f => ({ ...f, color: '' }))}>Limpar</button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
                 <div className="form-group">
-                  <label className="form-label">Data Limite (opcional)</label>
-                  <input className="input" type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
+                  <label className="form-label">Status</label>
+                  <select className="select" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value as any }))}>
+                    {Object.entries(STATUS_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                  </select>
                 </div>
+                <div className="form-group">
+                  <label className="form-label">Cor (Opcional)</label>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <input type="color" className="input" style={{ width: '50px', padding: '0 4px', height: '40px' }} value={form.color || '#6366f1'} onChange={e => setForm(f => ({ ...f, color: e.target.value }))} />
+                    {form.color && (
+                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => setForm(f => ({ ...f, color: '' }))}>Limpar</button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Data Limite (opcional)</label>
+                <input className="input" type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
+              </div>
 
               <div className="form-group">
                 <label className="form-label">Descrição (opcional)</label>
