@@ -40,15 +40,15 @@ export default function ForgotPasswordPage() {
 
         {!message && (
           <div style={{ 
-            background: 'rgba(var(--brand-primary-rgb), 0.1)', 
-            border: '1px solid var(--brand-primary-light)', 
+            background: 'rgba(99, 102, 241, 0.1)', 
+            border: '1px solid #6366f1', 
             borderRadius: '12px', 
             padding: '16px', 
             marginBottom: '24px',
             fontSize: '0.875rem',
-            color: 'var(--text-secondary)'
+            color: '#f1f3f9'
           }}>
-            <p style={{ fontWeight: 600, color: 'var(--brand-primary-light)', marginBottom: '8px' }}>
+            <p style={{ fontWeight: 600, color: '#6366f1', marginBottom: '8px' }}>
               💡 Como funciona:
             </p>
             <ul style={{ paddingLeft: '20px', margin: 0 }}>
