@@ -38,6 +38,27 @@ export default function ForgotPasswordPage() {
           <p className={styles.subtitle}>Digite seu e-mail para receber o link de recuperação</p>
         </div>
 
+        {!message && (
+          <div style={{ 
+            background: 'rgba(var(--brand-primary-rgb), 0.1)', 
+            border: '1px solid var(--brand-primary-light)', 
+            borderRadius: '12px', 
+            padding: '16px', 
+            marginBottom: '24px',
+            fontSize: '0.875rem',
+            color: 'var(--text-secondary)'
+          }}>
+            <p style={{ fontWeight: 600, color: 'var(--brand-primary-light)', marginBottom: '8px' }}>
+              💡 Como funciona:
+            </p>
+            <ul style={{ paddingLeft: '20px', margin: 0 }}>
+              <li>Enviaremos um link seguro para o seu e-mail.</li>
+              <li>O link expira em <strong>1 hora</strong> por segurança.</li>
+              <li>Após clicar no link, você poderá criar uma nova senha.</li>
+            </ul>
+          </div>
+        )}
+
         {!message ? (
           <form onSubmit={handleSubmit} className={styles.form}>
             {error && <div className={styles.error}>{error}</div>}
