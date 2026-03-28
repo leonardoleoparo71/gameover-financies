@@ -19,7 +19,6 @@ export default function LandingPage() {
           <img src="/logo.webp" alt="GameOver" width={40} height={40} />
         </div>
         <div className={styles.navLinks}>
-          <Link href="/sobre" className={styles.navLink}>SOBRE</Link>
           <Link href="/login" className={styles.navLink}>ENTRAR</Link>
           <Link href="/register" className={styles.navLink}>CADASTRAR</Link>
         </div>

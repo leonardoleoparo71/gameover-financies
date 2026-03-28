@@ -3,12 +3,12 @@ version: "3.9"
 services:
   db:
     image: postgres:16-alpine
-    container_name: finplan_db
+    container_name: gameover_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: finplan
-      POSTGRES_PASSWORD: finplan_secret
-      POSTGRES_DB: finplan
+      POSTGRES_USER: gameover
+      POSTGRES_PASSWORD: gameover_secret
+      POSTGRES_DB: gameover
     ports:
       - "5432:5432"
     volumes:
@@ -18,12 +18,12 @@ services:
     build:
       context: ./apps/backend
       dockerfile: Dockerfile.dev
-    container_name: finplan_backend
+    container_name: gameover_backend
     restart: unless-stopped
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgresql://finplan:finplan_secret@db:5432/finplan
+      DATABASE_URL: postgresql://gameover:gameover_secret@db:5432/gameover
       JWT_SECRET: super_secret_jwt_key_change_in_production
       PORT: 3001
       NODE_ENV: development
@@ -39,7 +39,7 @@ services:
     build:
       context: ./apps/frontend
       dockerfile: Dockerfile.dev
-    container_name: finplan_frontend
+    container_name: gameover_frontend
     restart: unless-stopped
     depends_on:
       - backend

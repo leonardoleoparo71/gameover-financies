@@ -21,8 +21,13 @@ const PORT = process.env.PORT || 3001;
 // ─── Middleware Manual CORS ────────────────────────────────────────────────────
 app.use((req: Request, res: Response, next: NextFunction) => {
   const origin = req.headers.origin;
+  const whitelist = [
+    process.env.FRONTEND_URL || 'http://localhost:3000',
+    'http://localhost:3000',
+    'https://gameover-financies.vercel.app' // Exemplo de domínio futuro
+  ];
   
-  if (origin) {
+  if (origin && (whitelist.includes(origin) || process.env.NODE_ENV === 'development')) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   

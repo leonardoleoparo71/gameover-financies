@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import { usePathname } from 'next/navigation';
 
-const PUBLIC_ROUTES = ['/', '/login', '/register'];
+const PUBLIC_ROUTES = ['/', '/login', '/register', '/forgot-password', '/reset-password'];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();

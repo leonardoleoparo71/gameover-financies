@@ -72,6 +72,11 @@ export const api = {
   updateNode: (id: string, data: Partial<TreeNode>) =>
     request<TreeNode>(`/tree/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteNode: (id: string) => request(`/tree/${id}`, { method: 'DELETE' }),
+
+  forgotPassword: (email: string) =>
+    request<{ message: string }>('/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) }),
+  resetPassword: (token: string, newPassword: string) =>
+    request<{ message: string }>('/auth/reset-password', { method: 'POST', body: JSON.stringify({ token, newPassword }) }),
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────

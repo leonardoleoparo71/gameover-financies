@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../lib/prisma';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
-import { sendWelcomeEmail } from '../services/email';
+import { sendWelcomeEmail, sendResetPasswordEmail } from '../services/email';
 
 const router = Router();
 
@@ -92,6 +92,66 @@ router.post('/login', async (req: Request, res: Response) => {
 router.post('/logout', (_req: Request, res: Response) => {
   res.clearCookie('token');
   res.json({ message: 'Logout realizado com sucesso' });
+});
+
+// POST /auth/forgot-password
+router.post('/forgot-password', async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  if (!email) {
+    res.status(400).json({ error: 'Email é obrigatório' });
+    return;
+  }
+
+  const user = await prisma.user.findUnique({ where: { email } });
+  
+  // Por segurança, não confirmamos se o email existe ou não (prevenção de enumeração)
+  if (user) {
+    const resetToken = jwt.sign(
+      { userId: user.id, purpose: 'reset-password' }, 
+      process.env.JWT_SECRET!, 
+      { expiresIn: '1h' }
+    );
+    
+    // Dispara o email em background
+    sendResetPasswordEmail(user.email, user.name, resetToken);
+  }
+
+  res.json({ message: 'Se o email estiver cadastrado, um link de recuperação será enviado.' });
+});
+
+// POST /auth/reset-password
+router.post('/reset-password', async (req: Request, res: Response) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    res.status(400).json({ error: 'Token e nova senha são obrigatórios' });
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    res.status(400).json({ error: 'Senha deve ter ao menos 6 caracteres' });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string, purpose: string };
+    
+    if (decoded.purpose !== 'reset-password') {
+      res.status(400).json({ error: 'Token inválido para esta operação' });
+      return;
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 12);
+    await prisma.user.update({
+      where: { id: decoded.userId },
+      data: { password: hashed },
+    });
+
+    res.json({ message: 'Senha atualizada com sucesso!' });
+  } catch (err) {
+    res.status(400).json({ error: 'Link de recuperação expirado ou inválido' });
+  }
 });
 
 // GET /auth/me
