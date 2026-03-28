@@ -44,7 +44,7 @@ export async function sendResetPasswordEmail(to: string, name: string, token: st
 
   try {
     await resend.emails.send({
-      from: 'GameOver <auth@resend.dev>',
+      from: 'GameOver <onboarding@resend.dev>',
       to,
       subject: 'Recuperação de Senha — GameOver 🔐',
       html: `
