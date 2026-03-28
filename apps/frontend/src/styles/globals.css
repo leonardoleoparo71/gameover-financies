@@ -6,8 +6,10 @@
   --brand-primary: hsl(239, 84%, 67%);        /* Modern Indigo */
   --brand-primary-dark: hsl(239, 84%, 57%);
   --brand-primary-light: hsl(239, 84%, 87%);
+  --brand-primary-rgb: 99, 102, 241;
   --brand-secondary: hsl(162, 84%, 39%);      /* Modern Emerald */
   --brand-secondary-dark: hsl(162, 84%, 29%);
+  --brand-secondary-rgb: 16, 185, 129;
   --brand-accent: hsl(38, 92%, 50%);         /* Amber */
   --brand-danger: hsl(0, 84%, 60%);
   --brand-danger-light: hsla(0, 84%, 60%, 0.1);
