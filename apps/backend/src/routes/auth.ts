@@ -33,8 +33,8 @@ router.post('/register', async (req: Request, res: Response) => {
     select: { id: true, name: true, email: true, createdAt: true },
   });
 
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'fallback_secret_gameover', {
-    expiresIn: '30d',
+  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
+    expiresIn: '12h',
   });
 
   // Disparar envio de email assíncrono para o fundo (não trava a resposta)
@@ -72,7 +72,7 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-    expiresIn: '30d',
+    expiresIn: '12h',
   });
 
   res.cookie('token', token, {

@@ -1,11 +1,9 @@
 'use client';
 
-import { useEffect, useState, useCallback, memo } from 'react';
+import { useEffect, useState, useCallback, memo, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { api, Summary, MonthlySnapshot } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import SalaryInput from '@/components/SalaryInput';
 import styles from './page.module.css';
 
@@ -72,21 +70,30 @@ export default function DashboardPage() {
     load();
   };
 
-  const chartData = [...snapshots]
-    .sort((a, b) => a.year !== b.year ? a.year - b.year : a.month - b.month)
-    .slice(-6)
-    .map(s => ({
-      name: `${MONTH_NAMES[s.month - 1]}/${String(s.year).slice(2)}`,
-      Renda: s.totalIncome,
-      Gastos: s.totalExpense,
-      Guardado: s.totalSaved,
-    }));
+  const chartData = useMemo(() => {
+    return [...snapshots]
+      .sort((a, b) => a.year !== b.year ? a.year - b.year : a.month - b.month)
+      .slice(-6)
+      .map(s => ({
+        name: `${MONTH_NAMES[s.month - 1]}/${String(s.year).slice(2)}`,
+        Renda: s.totalIncome,
+        Gastos: s.totalExpense,
+        Guardado: s.totalSaved,
+      }));
+  }, [snapshots]);
 
   const exportPDF = async () => {
     setExporting(true);
     try {
       const element = document.getElementById('dashboard-content');
       if (!element) return;
+      
+      // Lazy load das bibliotecas pesadas de PDF (Code Splitting)
+      const [html2canvas, jsPDF] = await Promise.all([
+        import('html2canvas').then(mod => mod.default),
+        import('jspdf').then(mod => mod.default)
+      ]);
+
       const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#020408' });
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');

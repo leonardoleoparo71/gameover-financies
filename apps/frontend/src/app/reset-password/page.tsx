@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import Image from 'next/image';
 import styles from '../auth.module.css';
 
 export default function ResetPasswordPage() {
@@ -50,7 +51,7 @@ export default function ResetPasswordPage() {
       <div className={styles.card}>
         <div className={styles.header}>
           <div className={styles.logo} style={{ display: 'flex', justifyContent: 'center' }}>
-            <img src="/logo.webp" alt="GameOver" width={48} height={48} />
+            <Image src="/logo.webp" alt="GameOver" width={48} height={48} />
           </div>
           <h1 className={styles.title}>Nova Senha</h1>
           <p className={styles.subtitle}>Escolha uma senha forte para sua conta</p>

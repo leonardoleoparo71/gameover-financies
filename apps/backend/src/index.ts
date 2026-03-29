@@ -2,11 +2,14 @@ import express, { Request, Response, NextFunction } from 'express';
 import 'express-async-errors';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import 'dotenv/config';
 
 if (!process.env.JWT_SECRET) {
-  console.warn('WARNING: JWT_SECRET environment variable is not set. Using a temporary secret for now (NOT SECURE!).');
-}const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_gameover';
+  console.error('CRITICAL: JWT_SECRET environment variable is missing. Refusing to start.');
+  process.exit(1);
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 import authRouter from './routes/auth';
 import transactionsRouter from './routes/transactions';
@@ -46,8 +49,15 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use(express.json());
 app.use(cookieParser());
 
+// ─── Rate Limiter ─────────────────────────────────────────────────────────────
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 30, // 30 reqs por IP
+  message: { error: 'Muitas tentativas de requisição. Aguarde alguns minutos.' },
+});
+
 // ─── Routes ───────────────────────────────────────────────────────────────────
-app.use('/auth', authRouter);
+app.use('/auth', authLimiter, authRouter);
 app.use('/transactions', transactionsRouter);
 app.use('/purchases', purchasesRouter);
 app.use('/goals', goalsRouter);

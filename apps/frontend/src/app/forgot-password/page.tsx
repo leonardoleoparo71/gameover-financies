@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import Image from 'next/image';
 import styles from '../auth.module.css';
 
 export default function ForgotPasswordPage() {
@@ -32,7 +33,7 @@ export default function ForgotPasswordPage() {
       <div className={styles.card}>
         <div className={styles.header}>
           <div className={styles.logo} style={{ display: 'flex', justifyContent: 'center' }}>
-            <img src="/logo.webp" alt="GameOver" width={48} height={48} />
+            <Image src="/logo.webp" alt="GameOver" width={48} height={48} />
           </div>
           <h1 className={styles.title}>Recuperar Senha</h1>
           <p className={styles.subtitle}>Digite seu e-mail para receber o link de recuperação</p>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import Image from 'next/image';
 import styles from './Sidebar.module.css';
 
 const NAV_ITEMS = [
@@ -22,7 +23,7 @@ export default function Sidebar() {
       <aside className={styles.sidebar}>
         {/* Logo */}
         <div className={styles.logo}>
-          <img src="/logo.webp" alt="GameOver" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+          <Image src="/logo.webp" alt="GameOver" width={32} height={32} style={{ objectFit: 'contain' }} />
           <span className={styles.logoText}>GameOver</span>
         </div>
 

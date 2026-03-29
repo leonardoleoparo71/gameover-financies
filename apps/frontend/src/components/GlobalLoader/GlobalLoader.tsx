@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import styles from './GlobalLoader.module.css';
+import Image from 'next/image';
 
 export default function GlobalLoader({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
@@ -35,7 +36,7 @@ export default function GlobalLoader({ children }: { children: React.ReactNode }
       {loading && (
         <div className={`${styles.loaderContainer} ${!isVisible ? styles.fadeOut : ''}`}>
           <div className={styles.logoWrapper}>
-        <img src="/logo.webp" alt="Loading..." className={styles.loaderLogo} />
+        <Image src="/logo.webp" alt="Loading..." width={60} height={60} className={styles.loaderLogo} />
         <div className={styles.progressTrack}>
             <div className={styles.progressFill} style={{ width: `${progress}%` }} />
           </div>

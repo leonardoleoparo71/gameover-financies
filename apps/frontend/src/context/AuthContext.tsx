@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { api, User } from '@/lib/api';
 
@@ -46,19 +46,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, loading, pathname, router]);
 
-  const login = async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     const data = await api.login({ email, password }) as { user: User };
     setUser(data.user);
     router.push('/dashboard');
-  };
+  }, [router]);
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = useCallback(async (name: string, email: string, password: string) => {
     const data = await api.register({ name, email, password }) as { user: User };
     setUser(data.user);
     router.push('/dashboard');
-  };
+  }, [router]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await api.logout();
     } catch (err) {
@@ -66,10 +66,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setUser(null);
     router.replace('/');
-  };
+  }, [router]);
+
+  const contextValue = useMemo(() => ({
+    user,
+    loading,
+    login,
+    register,
+    logout,
+    refreshUser: fetchMe
+  }), [user, loading, login, register, logout, fetchMe]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser: fetchMe }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

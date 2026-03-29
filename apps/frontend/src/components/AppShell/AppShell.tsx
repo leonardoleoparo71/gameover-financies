@@ -3,6 +3,7 @@
 import { useAuth } from '@/context/AuthContext';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 const PUBLIC_ROUTES = ['/', '/login', '/register', '/forgot-password', '/reset-password'];
 
@@ -21,7 +22,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         background: 'var(--bg-base)',
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}><img src="/logo.webp" alt="GameOver" width={48} height={48} /></div>
+          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}><Image src="/logo.webp" alt="GameOver" width={48} height={48} /></div>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Carregando GameOver...</p>
         </div>
       </div>

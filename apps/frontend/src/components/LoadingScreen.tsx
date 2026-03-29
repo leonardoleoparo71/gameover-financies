@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from './LoadingScreen.module.css';
+import Image from 'next/image';
 
 export default function LoadingScreen({ onFinished }: { onFinished: () => void }) {
   const [progress, setProgress] = useState(0);
@@ -24,7 +25,7 @@ export default function LoadingScreen({ onFinished }: { onFinished: () => void }
     <div className={styles.container}>
       <div className={styles.logoWrapper}>
         <div className={styles.circle}>
-          <img src="/logo.webp" alt="Loading..." className={styles.logo} />
+          <Image src="/logo.webp" alt="Loading..." width={70} height={70} className={styles.logo} />
         </div>
         <div className={styles.progressText}>{progress}%</div>
       </div>

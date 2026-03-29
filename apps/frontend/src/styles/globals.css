@@ -14,12 +14,12 @@
   --brand-danger: hsl(0, 84%, 60%);
   --brand-danger-light: hsla(0, 84%, 60%, 0.1);
 
-  /* Background layers - Ultra Dark Slate */
-  --bg-base: #020408;
-  --bg-surface: #06090e;
-  --bg-card: rgba(13, 17, 23, 0.7);
-  --bg-elevated: rgba(22, 27, 34, 0.8);
-  --bg-hover: rgba(33, 38, 45, 0.6);
+  /* Background layers - Absolute Black (Vercel/Linear SaaS Theme) */
+  --bg-base: #000000;
+  --bg-surface: rgba(10, 10, 10, 0.4);
+  --bg-card: rgba(255, 255, 255, 0.02);
+  --bg-elevated: rgba(255, 255, 255, 0.04);
+  --bg-hover: rgba(255, 255, 255, 0.08);
   
   /* Glassmorphism - Refined */
   --glass-bg: rgba(255, 255, 255, 0.02);
@@ -86,7 +86,14 @@ html { scroll-behavior: smooth; font-size: 16px; }
 
 body {
   font-family: 'Inter', sans-serif;
-  background: var(--bg-base);
+  background-color: var(--bg-base);
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.05), transparent 45%),
+    radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05), transparent 45%),
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+  background-attachment: fixed;
   color: var(--text-primary);
   line-height: 1.6;
   min-height: 100vh;

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from '../auth.module.css';
 
 export default function LoginPage() {
@@ -31,7 +32,7 @@ export default function LoginPage() {
       <div className={styles.card}>
         <div className={styles.header}>
           <div className={styles.logo} style={{ display: 'flex', justifyContent: 'center' }}>
-            <img src="/logo.webp" alt="GameOver" width={48} height={48} />
+            <Image src="/logo.webp" alt="GameOver" width={48} height={48} />
           </div>
           <h1 className={styles.title}>Bem-vindo ao GameOver</h1>
           <p className={styles.subtitle}>Faça login para continuar sua jornada</p>
