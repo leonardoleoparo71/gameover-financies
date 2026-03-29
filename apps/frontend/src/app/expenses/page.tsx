@@ -142,16 +142,20 @@ export default function ExpensesPage() {
       <div className={styles.summaryRow}>
         <div className={styles.summaryCard} style={{ borderColor: 'rgba(16,185,129,0.4)' }}>
           <span className={styles.summaryLabel}>💰 Renda</span>
-          <span className={styles.summaryValue} style={{ color: 'var(--brand-secondary)' }}>{fmt(totalIncome)}</span>
+          <span className={styles.summaryValue} style={{ color: 'var(--brand-secondary)' }}>
+            {loading ? <div className="skeleton" style={{ width: '80px', height: '28px' }} /> : fmt(totalIncome)}
+          </span>
         </div>
         <div className={styles.summaryCard} style={{ borderColor: 'rgba(239,68,68,0.4)' }}>
           <span className={styles.summaryLabel}>💸 Gastos</span>
-          <span className={styles.summaryValue} style={{ color: 'var(--brand-danger)' }}>{fmt(totalExpense)}</span>
+          <span className={styles.summaryValue} style={{ color: 'var(--brand-danger)' }}>
+            {loading ? <div className="skeleton" style={{ width: '80px', height: '28px' }} /> : fmt(totalExpense)}
+          </span>
         </div>
         <div className={styles.summaryCard} style={{ borderColor: (totalIncome - totalExpense) >= 0 ? 'rgba(99,102,241,0.4)' : 'rgba(239,68,68,0.4)' }}>
           <span className={styles.summaryLabel}>🏦 Saldo</span>
           <span className={styles.summaryValue} style={{ color: (totalIncome - totalExpense) >= 0 ? 'var(--brand-primary-light)' : 'var(--brand-danger)' }}>
-            {fmt(totalIncome - totalExpense)}
+            {loading ? <div className="skeleton" style={{ width: '80px', height: '28px' }} /> : fmt(totalIncome - totalExpense)}
           </span>
         </div>
       </div>
@@ -171,7 +175,22 @@ export default function ExpensesPage() {
 
       {/* List */}
       {loading ? (
-        <div className={styles.loading}><div className={styles.spinner} /></div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          {[1,2,3,4,5].map(i => (
+            <div key={i} className={styles.row} style={{ opacity: 0.5 }}>
+              <div className={styles.rowLeft}>
+                <div className={`${styles.rowDot} skeleton`} />
+                <div style={{ flex: 1 }}>
+                  <div className="skeleton" style={{ height: '16px', width: '120px', marginBottom: '8px' }} />
+                  <div className="skeleton" style={{ height: '12px', width: '200px' }} />
+                </div>
+              </div>
+              <div className={styles.rowRight}>
+                <div className="skeleton" style={{ height: '24px', width: '80px' }} />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : displayTransactions.length === 0 ? (
         <div className="empty-state">
           <span className="empty-state-icon">📭</span>

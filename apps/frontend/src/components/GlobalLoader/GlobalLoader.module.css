@@ -31,7 +31,7 @@
   width: 60px;
   height: 60px;
   filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
-  animation: pulse 2s ease-in-out infinite;
+  animation: pulse 2s ease-in-out infinite, spin 3s linear infinite;
 }
 
 .progressTrack {

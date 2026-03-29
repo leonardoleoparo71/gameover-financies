@@ -12,19 +12,19 @@ export default function GlobalLoader({ children }: { children: React.ReactNode }
   useEffect(() => {
     let current = 0;
     const interval = setInterval(() => {
-      // Faster steps and shorter interval
-      current += Math.floor(Math.random() * 25) + 8;
+      // Very aggressive jumps for instant feedback
+      current += Math.floor(Math.random() * 35) + 12;
       if (current >= 100) {
         current = 100;
         clearInterval(interval);
-        // Start fading out
+        // Instant fade out
         setTimeout(() => {
           setIsVisible(false);
           setLoading(false);
-        }, 150);
+        }, 100);
       }
       setProgress(current);
-    }, 50);
+    }, 30);
 
     return () => clearInterval(interval);
   }, []);

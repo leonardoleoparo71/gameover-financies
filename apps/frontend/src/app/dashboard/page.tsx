@@ -108,7 +108,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="page-title">Dashboard</h1>
           <p className="page-subtitle">
-            {loading ? 'Carregando sua visão geral...' : `Visão geral de ${MONTH_NAMES[(summary?.month ?? 1) - 1]} ${summary?.year}`}
+            {loading ? <span className="skeleton" style={{ width: '180px', height: '14px', display: 'inline-block' }} /> : `Visão geral de ${MONTH_NAMES[(summary?.month ?? 1) - 1]} ${summary?.year}`}
           </p>
         </div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>

@@ -64,14 +64,25 @@ export default function PurchasesPage() {
         <div>
           <h1 className="page-title">Compras Futuras</h1>
           <p className="page-subtitle">
-            {purchases.length} {purchases.length === 1 ? 'item planejado' : 'itens planejados'} · Total: {fmt(total)}
+            {loading ? <span className="skeleton" style={{ width: '120px', height: '14px', display: 'inline-block' }} /> : `${purchases.length} ${purchases.length === 1 ? 'item planejado' : 'itens planejados'} · Total: ${fmt(total)}`}
           </p>
         </div>
-        <button className="btn btn-primary" onClick={openCreate}>+ Nova Compra</button>
+        <button className="btn btn-primary" onClick={openCreate} disabled={loading}>+ Nova Compra</button>
       </div>
 
       {loading ? (
-        <div className={styles.loading}><div className={styles.spinner} /></div>
+        <div className={`grid-auto`}>
+          {[1,2,3].map(i => (
+            <div key={i} className={styles.purchaseCard}>
+               <div className={`${styles.cardImg} skeleton`} />
+               <div className={styles.cardBody}>
+                  <div className="skeleton" style={{ height: '24px', width: '70%', marginBottom: '12px' }} />
+                  <div className="skeleton" style={{ height: '16px', width: '40%', marginBottom: '12px' }} />
+                  <div className="skeleton" style={{ height: '32px', width: '50%' }} />
+               </div>
+            </div>
+          ))}
+        </div>
       ) : purchases.length === 0 ? (
         <div className="empty-state">
           <span className="empty-state-icon">🛒</span>
