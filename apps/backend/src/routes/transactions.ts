@@ -57,7 +57,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
     res.status(201).json(t);
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      res.status(400).json({ error: 'Erro de validação (Zod)', details: err.errors });
+      res.status(400).json({ error: 'Erro de validação (Zod)', details: (err as any).errors });
       return;
     }
     res.status(500).json({ error: 'Erro interno ao criar transação' });
@@ -86,7 +86,7 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
     res.json(t);
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      res.status(400).json({ error: 'Erro de validação (Zod)', details: err.errors });
+      res.status(400).json({ error: 'Erro de validação (Zod)', details: (err as any).errors });
       return;
     }
     res.status(500).json({ error: 'Erro interno ao atualizar transação' });

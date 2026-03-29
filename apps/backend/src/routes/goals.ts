@@ -41,7 +41,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
     res.status(201).json(g);
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      res.status(400).json({ error: 'Erro de validação (Zod)', details: (err as z.ZodError<any>).errors });
+      res.status(400).json({ error: 'Erro de validação (Zod)', details: (err as any).errors });
       return;
     }
     res.status(500).json({ error: 'Erro interno ao criar meta' });
@@ -68,7 +68,7 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
     res.json(g);
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      res.status(400).json({ error: 'Erro de validação (Zod)', details: (err as z.ZodError<any>).errors });
+      res.status(400).json({ error: 'Erro de validação (Zod)', details: (err as any).errors });
       return;
     }
     res.status(500).json({ error: 'Erro interno ao atualizar meta' });
