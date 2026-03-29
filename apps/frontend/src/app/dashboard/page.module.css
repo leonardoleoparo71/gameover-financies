@@ -36,12 +36,18 @@
 
 .insightItem {
   padding: var(--space-3) var(--space-4);
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-md);
   font-size: 0.875rem;
   color: var(--text-secondary);
-  border-left: 3px solid var(--brand-primary);
   line-height: 1.5;
+  transition: all var(--transition-base);
+}
+
+.insightItem:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .distItem { display: flex; flex-direction: column; gap: var(--space-2); }

@@ -4,10 +4,10 @@
   position: fixed;
   left: 0;
   top: 0;
-  background: rgba(10, 12, 18, 0.6);
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-right: 1px solid var(--glass-border);
+  border-right: 1px solid rgba(255,255,255,0.05);
   display: flex;
   flex-direction: column;
   z-index: 1000;
@@ -65,9 +65,9 @@
 }
 
 .navItem.active {
-  background: var(--brand-primary);
-  color: white;
-  box-shadow: var(--shadow-glow);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.01);
 }
 
 .navItem.active::before {
@@ -76,10 +76,11 @@
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 3px;
+  width: 2px;
   height: 60%;
-  background: var(--brand-primary);
+  background: #ffffff;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  box-shadow: 0 0 10px rgba(255,255,255,0.8);
 }
 
 .navIcon { font-size: 1.1rem; flex-shrink: 0; }
