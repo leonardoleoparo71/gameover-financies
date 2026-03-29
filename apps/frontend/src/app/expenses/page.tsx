@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { api, Transaction } from '@/lib/api';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { api, Transaction, User } from '@/lib/api';
 import styles from './page.module.css';
 
 const CATEGORIES = [
@@ -44,6 +44,7 @@ const emptyForm: FormData = {
 
 export default function ExpensesPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Transaction | null>(null);
@@ -59,8 +60,12 @@ export default function ExpensesPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await api.getTransactions({ month, year });
-      setTransactions(data);
+      const [transData, userData] = await Promise.all([
+        api.getTransactions({ month, year }),
+        api.me()
+      ]);
+      setTransactions(transData);
+      setUser(userData.user);
     } catch {/**/} finally { setLoading(false); }
   }, [month, year]);
 
@@ -102,9 +107,24 @@ export default function ExpensesPage() {
     } catch { alert('Erro ao salvar snapshot'); }
   };
 
-  const filtered = transactions.filter(t => filterType === 'all' || t.type === filterType);
-  const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0) + (user?.salary || 0);
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+
+  const displayTransactions = useMemo(() => {
+    const list = [...transactions];
+    if (user?.salary && user.salary > 0) {
+      list.unshift({
+        id: 'salary-virtual',
+        userId: user.id,
+        type: 'income',
+        category: 'essential',
+        name: 'Salário Mensal (Base)',
+        amount: user.salary,
+        date: new Date(year, month - 1, 1).toISOString(),
+      });
+    }
+    return list.filter(t => filterType === 'all' || t.type === filterType);
+  }, [transactions, user, filterType, month, year]);
 
   return (
     <div className="animate-fade-in">
@@ -155,7 +175,7 @@ export default function ExpensesPage() {
       {/* List */}
       {loading ? (
         <div className={styles.loading}><div className={styles.spinner} /></div>
-      ) : filtered.length === 0 ? (
+      ) : displayTransactions.length === 0 ? (
         <div className="empty-state">
           <span className="empty-state-icon">📭</span>
           <p className="empty-state-text">Nenhuma transação encontrada. Que tal adicionar uma?</p>
@@ -163,41 +183,51 @@ export default function ExpensesPage() {
         </div>
       ) : (
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-          {filtered.map((t, i) => (
-            <div
-              key={t.id}
-              className={styles.row}
-              style={{ borderTop: i > 0 ? '1px solid var(--border-subtle)' : 'none' }}
-            >
-              <div className={styles.rowLeft}>
-                <div
-                  className={styles.rowDot}
-                  style={{ background: CATEGORY_COLORS[t.category] || 'var(--brand-primary)' }}
-                />
-                <div>
-                  <div className={styles.rowName}>{t.name}</div>
-                  <div className={styles.rowMeta}>
-                    <span className={`badge ${t.type === 'income' ? 'badge-green' : 'badge-red'}`}>
-                      {t.type === 'income' ? 'Receita' : 'Despesa'}
-                    </span>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.775rem' }}>
-                      · {CATEGORIES.find(c => c.value === t.category)?.label} · {fmtDate(t.date)}
-                    </span>
+          {displayTransactions.map((t, i) => {
+            const isSalary = t.id === 'salary-virtual';
+            return (
+              <div
+                key={t.id}
+                className={`${styles.row} ${isSalary ? styles.salaryRow : ''}`}
+                style={{ borderTop: i > 0 ? '1px solid var(--border-subtle)' : 'none' }}
+              >
+                <div className={styles.rowLeft}>
+                  <div
+                    className={styles.rowDot}
+                    style={{ background: CATEGORY_COLORS[t.category] || 'var(--brand-primary)' }}
+                  />
+                  <div>
+                    <div className={styles.rowName}>
+                      {t.name}
+                      {isSalary && <span className={styles.salaryBadge}>FIXO</span>}
+                    </div>
+                    <div className={styles.rowMeta}>
+                      <span className={`badge ${t.type === 'income' ? 'badge-green' : 'badge-red'}`}>
+                        {t.type === 'income' ? 'Receita' : 'Despesa'}
+                      </span>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.775rem' }}>
+                        · {CATEGORIES.find(c => c.value === t.category)?.label} · {fmtDate(t.date)}
+                      </span>
+                    </div>
                   </div>
                 </div>
+                <div className={styles.rowRight}>
+                  <span
+                    className={styles.rowAmount}
+                    style={{ color: t.type === 'income' ? 'var(--brand-secondary)' : 'var(--brand-danger)' }}
+                  >
+                    {t.type === 'income' ? '+' : '-'}{fmt(t.amount)}
+                  </span>
+                  {!isSalary && (
+                    <>
+                      <button className="btn btn-ghost btn-sm btn-icon" onClick={() => openEdit(t)}>✏️</button>
+                      <button className="btn btn-ghost btn-sm btn-icon" onClick={() => remove(t.id)}>🗑️</button>
+                    </>
+                  )}
+                </div>
               </div>
-              <div className={styles.rowRight}>
-                <span
-                  className={styles.rowAmount}
-                  style={{ color: t.type === 'income' ? 'var(--brand-secondary)' : 'var(--brand-danger)' }}
-                >
-                  {t.type === 'income' ? '+' : '-'}{fmt(t.amount)}
-                </span>
-                <button className="btn btn-ghost btn-sm btn-icon" onClick={() => openEdit(t)}>✏️</button>
-                <button className="btn btn-ghost btn-sm btn-icon" onClick={() => remove(t.id)}>🗑️</button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
