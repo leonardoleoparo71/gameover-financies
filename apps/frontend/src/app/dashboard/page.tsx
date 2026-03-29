@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback, memo } from 'react';
 import dynamic from 'next/dynamic';
-import { api, Summary, MonthlySnapshot, User } from '@/lib/api';
+import { api, Summary, MonthlySnapshot } from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import SalaryInput from '@/components/SalaryInput';
@@ -46,27 +47,30 @@ StatCard.displayName = 'StatCard';
 export default function DashboardPage() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [snapshots, setSnapshots] = useState<MonthlySnapshot[]>([]);
-  const [user, setUser] = useState<User | null>(null);
+  const { user, refreshUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [s, snaps, u] = await Promise.all([
+      const [s, snaps] = await Promise.all([
         api.getSummary(), 
-        api.getSnapshots(),
-        api.me()
+        api.getSnapshots()
       ]);
       setSummary(s);
       setSnapshots(snaps);
-      setUser(u.user);
     } catch {/* ignore */} finally {
-      setTimeout(() => setLoading(false), 800); // Small delay for smooth transition
+      setTimeout(() => setLoading(false), 300); // Shorter delay
     }
   }, []);
 
   useEffect(() => { load(); }, [load]);
+  
+  const handleSalaryUpdate = async () => {
+    await refreshUser();
+    load();
+  };
 
   const chartData = [...snapshots]
     .sort((a, b) => a.year !== b.year ? a.year - b.year : a.month - b.month)
@@ -119,7 +123,7 @@ export default function DashboardPage() {
 
       {!loading && (
         <div style={{ marginBottom: '24px', maxWidth: '400px' }}>
-          <SalaryInput initialSalary={user?.salary} onUpdate={load} />
+          <SalaryInput initialSalary={user?.salary} onUpdate={handleSalaryUpdate} />
         </div>
       )}
 

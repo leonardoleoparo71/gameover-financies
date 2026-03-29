@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { api, Transaction, User } from '@/lib/api';
+import { api, Transaction } from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 import styles from './page.module.css';
 
 const CATEGORIES = [
@@ -44,7 +45,7 @@ const emptyForm: FormData = {
 
 export default function ExpensesPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [user, setUser] = useState<User | null>(null);
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Transaction | null>(null);
@@ -60,12 +61,8 @@ export default function ExpensesPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [transData, userData] = await Promise.all([
-        api.getTransactions({ month, year }),
-        api.me()
-      ]);
-      setTransactions(transData);
-      setUser(userData.user);
+      const data = await api.getTransactions({ month, year });
+      setTransactions(data);
     } catch {/**/} finally { setLoading(false); }
   }, [month, year]);
 
