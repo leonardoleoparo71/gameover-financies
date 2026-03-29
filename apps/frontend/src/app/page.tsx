@@ -28,8 +28,8 @@ export default function LandingPage() {
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>GAMEOVER</h1>
           <p className={styles.heroSubtitle}>
-            Ele não é um herói porque escolheu ser. Ele é um herói porque 
-            <br />não existe outra opção para salvar suas finanças.
+            Domine suas finanças, vença o jogo do dinheiro e alcance sua liberdade. 
+            A estratégia definitiva para o seu sucesso financeiro.
           </p>
 
           <div className={styles.heroActions}>

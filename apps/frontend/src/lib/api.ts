@@ -29,6 +29,8 @@ export const api = {
     request('/auth/login', { method: 'POST', body: JSON.stringify(data) }),
   logout: () => request('/auth/logout', { method: 'POST' }),
   me: () => request<{ user: User }>('/auth/me'),
+  updateProfile: (data: Partial<User>) =>
+    request<{ user: User }>('/auth/profile', { method: 'PUT', body: JSON.stringify(data) }),
 
   // Transactions
   getTransactions: (params?: { month?: number; year?: number }) => {
@@ -84,6 +86,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  salary: number;
   createdAt: string;
 }
 

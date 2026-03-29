@@ -1,12 +1,7 @@
 .landingWrapper {
   min-height: 100vh;
   width: 100vw;
-  background: 
-    linear-gradient(to right, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 40%, rgba(0, 0, 0, 0.8) 100%),
-    url('/hero-bg.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: radial-gradient(circle at top right, #111827 0%, #030712 100%);
   display: flex;
   flex-direction: column;
   color: white;
@@ -56,11 +51,11 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-end; /* Aligning content to the right as in the Ragnarok reference */
-  padding-right: 15%; /* Spacing from the right edge */
-  text-align: right;
+  align-items: center;
+  padding: 0 24px;
+  text-align: center;
   z-index: 5;
-  margin-top: -80px; /* Offset the navbar height */
+  margin-top: -80px;
 }
 
 .heroTitle {
@@ -88,7 +83,7 @@
 .heroActions {
   display: flex;
   gap: 16px;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .btnPrimary {

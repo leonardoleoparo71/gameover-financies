@@ -13,7 +13,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   const start = new Date(year, month - 1, 1);
   const end = new Date(year, month, 1);
 
-  const [transactions, purchases, goals, prevSnapshot] = await Promise.all([
+  const [transactions, purchases, goals, prevSnapshot, user] = await Promise.all([
     prisma.transaction.findMany({ where: { userId: req.userId!, date: { gte: start, lt: end } } }),
     prisma.futurePurchase.findMany({ where: { userId: req.userId! } }),
     prisma.goal.findMany({ where: { userId: req.userId! } }),
@@ -21,9 +21,11 @@ router.get('/', async (req: AuthRequest, res: Response) => {
       where: { userId: req.userId!, OR: [{ month: month - 1, year }, { month: 12, year: year - 1 }] },
       orderBy: [{ year: 'desc' }, { month: 'desc' }],
     }),
+    prisma.user.findUnique({ where: { id: req.userId! }, select: { salary: true } }),
   ]);
 
-  const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const transactionsIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const totalIncome = transactionsIncome + (user?.salary || 0);
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
   const totalPurchasesCost = purchases.reduce((s, p) => s + p.value, 0);
   const saved = totalIncome - totalExpense;

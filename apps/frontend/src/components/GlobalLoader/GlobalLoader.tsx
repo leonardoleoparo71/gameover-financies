@@ -26,27 +26,11 @@ export default function GlobalLoader({ children }: { children: React.ReactNode }
 
   return (
     <div className={styles.loaderContainer}>
-      <div className={styles.hammerWrapper}>
-        <svg 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="1.5"
-          className={styles.hammerOutline}
-        >
-          {/* Base Thor Hammer SVG Path */}
-          <path d="M4 12V8h16v4M8 8V6a2 2 0 012-2h4a2 2 0 012 2v2M12 12v10" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-
-        <svg 
-          viewBox="0 0 24 24" 
-          fill="currentColor" 
-          className={styles.hammerFill}
-          style={{ clipPath: `inset(${100 - progress}% 0 0 0)` }}
-        >
-          {/* Base Thor Hammer SVG Path filled */}
-          <path d="M4 12V8h16v4M8 8V6a2 2 0 012-2h4a2 2 0 012 2v2M12 12v10M11 12v10h2V12h-2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+      <div className={styles.logoWrapper}>
+        <img src="/logo.webp" alt="Loading..." className={styles.loaderLogo} />
+        <div className={styles.progressTrack}>
+           <div className={styles.progressFill} style={{ width: `${progress}%` }} />
+        </div>
       </div>
       <div className={styles.percentage}>{progress}%</div>
     </div>

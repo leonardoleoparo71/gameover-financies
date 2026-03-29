@@ -2,9 +2,10 @@
 
 import { useEffect, useState, useCallback, memo } from 'react';
 import dynamic from 'next/dynamic';
-import { api, Summary, MonthlySnapshot } from '@/lib/api';
+import { api, Summary, MonthlySnapshot, User } from '@/lib/api';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import SalaryInput from '@/components/SalaryInput';
 import styles from './page.module.css';
 
 // Lazy load HistoryChart to fix SSR and performance
@@ -45,15 +46,21 @@ StatCard.displayName = 'StatCard';
 export default function DashboardPage() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [snapshots, setSnapshots] = useState<MonthlySnapshot[]>([]);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [s, snaps] = await Promise.all([api.getSummary(), api.getSnapshots()]);
+      const [s, snaps, u] = await Promise.all([
+        api.getSummary(), 
+        api.getSnapshots(),
+        api.me()
+      ]);
       setSummary(s);
       setSnapshots(snaps);
+      setUser(u.user);
     } catch {/* ignore */} finally {
       setTimeout(() => setLoading(false), 800); // Small delay for smooth transition
     }
@@ -100,7 +107,7 @@ export default function DashboardPage() {
             {loading ? 'Carregando sua visão geral...' : `Visão geral de ${MONTH_NAMES[(summary?.month ?? 1) - 1]} ${summary?.year}`}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <button className="btn btn-secondary btn-sm" onClick={exportPDF} disabled={exporting || loading}>
             {exporting ? '⏳ Gerando...' : '📄 Exportar PDF'}
           </button>
@@ -109,6 +116,12 @@ export default function DashboardPage() {
           </button>
         </div>
       </div>
+
+      {!loading && (
+        <div style={{ marginBottom: '24px', maxWidth: '400px' }}>
+          <SalaryInput initialSalary={user?.salary} onUpdate={load} />
+        </div>
+      )}
 
       {/* Stat Cards */}
       <div className={`grid-4 ${styles.statsGrid}`}>

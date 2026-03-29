@@ -162,13 +162,29 @@ router.post('/reset-password', async (req: Request, res: Response) => {
 router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {
   const user = await prisma.user.findUnique({
     where: { id: req.userId! },
-    select: { id: true, name: true, email: true, createdAt: true },
+    select: { id: true, name: true, email: true, salary: true, createdAt: true },
   });
 
   if (!user) {
     res.status(404).json({ error: 'Usuário não encontrado' });
     return;
   }
+
+  res.json({ user });
+});
+
+// PUT /auth/profile
+router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) => {
+  const { salary, name } = req.body;
+
+  const user = await prisma.user.update({
+    where: { id: req.userId! },
+    data: {
+      ...(salary !== undefined && { salary: Number(salary) }),
+      ...(name && { name }),
+    },
+    select: { id: true, name: true, email: true, salary: true, createdAt: true },
+  });
 
   res.json({ user });
 });
