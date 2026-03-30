@@ -54,15 +54,20 @@ export default function PurchasesPage() {
 
   const remove = async (id: string) => {
     if (!confirm('Remover esta compra?')) return;
-    await api.deletePurchase(id); await load();
+    try {
+      await api.deletePurchase(id); 
+      await load();
+    } catch (e: any) {
+      alert(`Erro ao excluir: ${e.message || 'Desconhecido'}`);
+    }
   };
 
   const togglePurchased = async (p: FuturePurchase) => {
     try {
       await api.updatePurchase(p.id, { purchased: !p.purchased });
       await load();
-    } catch {
-      setError('Erro ao atualizar status');
+    } catch (e: any) {
+      alert(`Não foi possível marcar a compra: ${e.message || 'Tente novamente.'}`);
     }
   };
 

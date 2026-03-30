@@ -6,7 +6,6 @@ import { z } from 'zod';
 const router = Router();
 router.use(authMiddleware);
 
-// ─── Zod Schemas ───
 const PurchaseSchema = z.object({
   name: z.string().min(1).max(255),
   description: z.string().optional().nullable(),
@@ -16,7 +15,14 @@ const PurchaseSchema = z.object({
   purchased: z.boolean().optional().default(false),
 });
 
-const UpdatePurchaseSchema = PurchaseSchema.partial();
+const UpdatePurchaseSchema = z.object({
+  name: z.string().min(1).max(255).optional(),
+  description: z.string().optional().nullable(),
+  value: z.coerce.number().positive().optional(),
+  link: z.union([z.string().url(), z.literal('')]).optional().nullable(),
+  imageUrl: z.union([z.string().url(), z.literal('')]).optional().nullable(),
+  purchased: z.boolean().optional(),
+});
 
 // GET /purchases
 router.get('/', async (req: AuthRequest, res: Response) => {
@@ -66,7 +72,7 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
     const p = await prisma.futurePurchase.update({
       where: { id },
       data: {
-        ...(data.name && { name: data.name }),
+        ...(data.name !== undefined && { name: data.name }),
         ...(data.description !== undefined && { description: data.description }),
         ...(data.value !== undefined && { value: data.value }),
         ...(data.link !== undefined && { link: data.link }),
