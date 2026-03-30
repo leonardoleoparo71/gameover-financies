@@ -27,7 +27,8 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   const transactionsIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
   const totalIncome = transactionsIncome + (user?.salary || 0);
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
-  const totalPurchasesCost = purchases.reduce((s, p) => s + p.value, 0);
+  const pendingPurchases = purchases.filter(p => !p.purchased);
+  const totalPurchasesCost = pendingPurchases.reduce((s, p) => s + p.value, 0);
   const saved = totalIncome - totalExpense;
   const savingsRate = totalIncome > 0 ? (saved / totalIncome) * 100 : 0;
   const spendRate = totalIncome > 0 ? (totalExpense / totalIncome) * 100 : 0;
@@ -63,9 +64,9 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   }
 
   // Impact of future purchases on savings
-  if (purchases.length > 0 && totalIncome > 0) {
+  if (pendingPurchases.length > 0 && totalIncome > 0) {
     const impact = (totalPurchasesCost / totalIncome) * 100;
-    insights.push(`🛒 Suas compras futuras planejadas representam ${impact.toFixed(1)}% da sua renda mensal.`);
+    insights.push(`🛒 Suas compras futuras pendentes representam ${impact.toFixed(1)}% da sua renda mensal média.`);
   }
 
   // Goals progress
@@ -79,12 +80,12 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   }
 
   // Specific purchase insight
-  if (purchases.length > 0 && goals.length > 0) {
-    const biggestPurchase = purchases.reduce((a, b) => a.value > b.value ? a : b);
+  if (pendingPurchases.length > 0 && goals.length > 0) {
+    const biggestPurchase = pendingPurchases.reduce((a, b) => a.value > b.value ? a : b);
     const firstGoal = goals[0];
     if (firstGoal.targetValue > 0) {
       const pct = (biggestPurchase.value / firstGoal.targetValue) * 100;
-      insights.push(`💡 "${biggestPurchase.name}" impacta sua meta "${firstGoal.name}" em ${pct.toFixed(1)}%.`);
+      insights.push(`💡 A compra pendente "${biggestPurchase.name}" impactará sua meta "${firstGoal.name}" em ${pct.toFixed(1)}%.`);
     }
   }
 

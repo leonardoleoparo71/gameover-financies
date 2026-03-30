@@ -23,6 +23,7 @@ export default function PurchasesPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<FuturePurchase | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -52,10 +53,11 @@ export default function PurchasesPage() {
     finally { setSaving(false); }
   };
 
-  const remove = async (id: string) => {
-    if (!confirm('Remover esta compra?')) return;
+  const confirmRemove = async () => {
+    if (!itemToDelete) return;
     try {
-      await api.deletePurchase(id); 
+      await api.deletePurchase(itemToDelete.id); 
+      setItemToDelete(null);
       await load();
     } catch (e: any) {
       alert(`Erro ao excluir: ${e.message || 'Desconhecido'}`);
@@ -113,7 +115,7 @@ export default function PurchasesPage() {
               <button onClick={() => { openEdit(p); setOpenMenuId(null); }}>
                 ✏️ Editar
               </button>
-              <button onClick={() => { remove(p.id); setOpenMenuId(null); }} className={styles.danger}>
+              <button onClick={() => { setItemToDelete(p); setOpenMenuId(null); }} className={styles.danger}>
                 🗑️ Excluir
               </button>
             </div>
@@ -212,6 +214,28 @@ export default function PurchasesPage() {
               <button className="btn btn-secondary" onClick={close}>Cancelar</button>
               <button className="btn btn-primary" onClick={save} disabled={saving}>
                 {saving ? 'Salvando...' : editing ? 'Salvar' : 'Adicionar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {itemToDelete && (
+        <div className="modal-backdrop" onClick={e => { if (e.target === e.currentTarget) setItemToDelete(null); }}>
+          <div className="modal" style={{ maxWidth: '400px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title" style={{ color: 'var(--brand-danger)' }}>Excluir Compra</h3>
+              <button className="btn btn-ghost btn-icon" onClick={() => setItemToDelete(null)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p style={{ color: 'var(--text-secondary)' }}>
+                Tem certeza que deseja excluir <strong>{itemToDelete.name}</strong>? Esta ação não pode ser desfeita.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setItemToDelete(null)}>Cancelar</button>
+              <button className="btn btn-primary" style={{ background: 'var(--brand-danger)', color: '#fff' }} onClick={confirmRemove}>
+                Sim, excluir
               </button>
             </div>
           </div>
