@@ -17,10 +17,21 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+
+  const closeMobile = () => setIsMobileNavOpen(false);
 
   return (
     <>
-      <aside className={styles.sidebar}>
+      <aside className={`${styles.sidebar} ${isMobileNavOpen ? styles.mobileOpen : ''}`}>
+        {/* Toggle Mobile (Hambúrguer) */}
+        <button 
+          className={styles.mobileToggle} 
+          onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
+        >
+          {isMobileNavOpen ? '✕' : '☰'}
+        </button>
+
         {/* Logo */}
         <div className={styles.logo}>
           <Image src="/logo.webp" alt="GameOver" width={32} height={32} style={{ objectFit: 'contain' }} />
@@ -28,11 +39,12 @@ export default function Sidebar() {
         </div>
 
         {/* Nav */}
-        <nav className={styles.nav}>
+        <nav className={`${styles.nav} ${isMobileNavOpen ? styles.navShown : ''}`}>
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
               href={item.href}
+              onClick={closeMobile}
               className={`${styles.navItem} ${pathname === item.href ? styles.active : ''}`}
             >
               <span className={styles.navIcon}>{item.icon}</span>
@@ -42,7 +54,7 @@ export default function Sidebar() {
         </nav>
 
         {/* User */}
-        <div className={styles.footer}>
+        <div className={`${styles.footer} ${isMobileNavOpen ? styles.footerShown : ''}`}>
           <div className={styles.userInfo}>
             <div className={styles.avatar}>{user?.name?.[0]?.toUpperCase() || 'U'}</div>
             <div className={styles.userDetails}>
@@ -50,9 +62,14 @@ export default function Sidebar() {
               <span className={styles.userEmail}>{user?.email}</span>
             </div>
           </div>
-          <button onClick={() => setShowLogoutConfirm(true)} className={styles.logoutBtn} title="Sair">⬅️</button>
+          <button onClick={() => { setShowLogoutConfirm(true); closeMobile(); }} className={styles.logoutBtn} title="Sair">⬅️</button>
         </div>
       </aside>
+
+      {/* Mobile Backdrop */}
+      {isMobileNavOpen && (
+        <div className={styles.mobileBackdrop} onClick={closeMobile} />
+      )}
 
       {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (

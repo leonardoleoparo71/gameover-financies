@@ -78,7 +78,7 @@ export default function PurchasesPage() {
   const total = toBuy.reduce((s, p) => s + p.value, 0);
 
   const renderCard = (p: FuturePurchase, isPurchased: boolean) => (
-    <div key={p.id} className={`${styles.purchaseCard} ${isPurchased ? styles.purchased : ''}`} style={{ zIndex: openMenuId === p.id ? 11 : undefined }}>
+    <div key={p.id} className={`${styles.purchaseCard} ${isPurchased ? styles.purchased : ''}`} style={{ zIndex: openMenuId === p.id ? 11 : undefined, transform: openMenuId === p.id ? 'scale(1.02)' : undefined, boxShadow: openMenuId === p.id ? '0 10px 30px rgba(0,0,0,0.6)' : undefined }}>
       {p.imageUrl && (
         <div className={styles.cardImg}>
           <Image src={p.imageUrl} alt={p.name} fill style={{ objectFit: 'cover' }} unoptimized />
@@ -100,7 +100,7 @@ export default function PurchasesPage() {
             className="btn btn-ghost btn-sm btn-icon" 
             onClick={() => setOpenMenuId(openMenuId === p.id ? null : p.id)}
             title="Opções"
-            style={{ fontSize: '1.2rem', padding: '0 8px' }}
+            style={{ fontSize: '1.2rem', padding: '12px' }}
           >
             •••
           </button>
