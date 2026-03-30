@@ -47,13 +47,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user, loading, pathname, router]);
 
   const login = useCallback(async (email: string, password: string) => {
-    const data = await api.login({ email, password }) as { user: User };
+    const data = await api.login({ email, password }) as { user: User; token: string };
+    if (data.token) localStorage.setItem('gameover_token', data.token);
     setUser(data.user);
     router.push('/dashboard');
   }, [router]);
 
   const register = useCallback(async (name: string, email: string, password: string) => {
-    const data = await api.register({ name, email, password }) as { user: User };
+    const data = await api.register({ name, email, password }) as { user: User; token: string };
+    if (data.token) localStorage.setItem('gameover_token', data.token);
     setUser(data.user);
     router.push('/dashboard');
   }, [router]);
@@ -64,6 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.error('Erro ao fazer logout no servidor:', err);
     }
+    localStorage.removeItem('gameover_token');
     setUser(null);
     router.replace('/');
   }, [router]);
