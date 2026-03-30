@@ -3,6 +3,7 @@ import '@/styles/globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import AppShell from '@/components/AppShell/AppShell';
 import GlobalLoader from '@/components/GlobalLoader/GlobalLoader';
+import BackToTop from '@/components/BackToTop';
 
 export const metadata: Metadata = {
   title: 'GameOver — Finanças Pessoais & Planejamento Visual',
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <GlobalLoader>
           <AuthProvider>
             <AppShell>{children}</AppShell>
+            <BackToTop />
           </AuthProvider>
         </GlobalLoader>
       </body>

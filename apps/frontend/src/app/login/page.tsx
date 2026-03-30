@@ -88,8 +88,13 @@ export default function LoginPage() {
             type="submit"
             className="btn btn-primary btn-full btn-lg"
             disabled={loading}
+            style={{ transition: 'all 0.3s' }}
           >
-            {loading ? 'Entrando...' : 'Entrar'}
+            {loading ? (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', animation: 'pulse 1.5s infinite' }}>
+                ⏳ Conectando...
+              </span>
+            ) : 'Entrar'}
           </button>
         </form>
 

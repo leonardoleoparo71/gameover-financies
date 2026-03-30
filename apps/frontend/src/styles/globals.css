@@ -34,8 +34,8 @@
 
   /* Text - High Contrast but soft */
   --text-primary: hsl(210, 40%, 98%);
-  --text-secondary: hsl(210, 15%, 75%);
-  --text-muted: hsl(210, 10%, 55%);
+  --text-secondary: hsl(210, 15%, 80%);
+  --text-muted: hsl(210, 15%, 65%);
   --text-on-brand: #ffffff;
 
   /* Borders */
