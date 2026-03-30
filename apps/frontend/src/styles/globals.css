@@ -256,15 +256,28 @@ a:hover { color: var(--brand-primary); }
 
 .stat-card .stat-icon { 
   position: absolute; 
-  right: var(--space-6); 
-  bottom: var(--space-6); 
-  font-size: 2.25rem; 
-  opacity: 0.1; 
-  filter: grayscale(1);
+  right: var(--space-5); 
+  bottom: var(--space-5); 
+  font-size: 1.75rem; 
+  opacity: 1; 
+  filter: none;
   transition: transform var(--transition-base);
+  background: hsla(239, 84%, 67%, 0.15); /* Default */
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-sizing: border-box;
 }
 
-.stat-card:hover .stat-icon { transform: scale(1.1) rotate(-5deg); opacity: 0.15; }
+.stat-card.income .stat-icon { background: hsla(162, 84%, 39%, 0.15); }
+.stat-card.expense .stat-icon { background: hsla(0, 84%, 60%, 0.15); }
+.stat-card.goal .stat-icon { background: hsla(38, 92%, 50%, 0.15); }
+
+.stat-card:hover .stat-icon { transform: scale(1.1) rotate(-5deg); filter: brightness(1.2); }
 
 /* ─── Buttons ────────────────────────────────────────────────────────────────── */
 .btn {
