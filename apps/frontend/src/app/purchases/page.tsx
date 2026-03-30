@@ -32,12 +32,6 @@ export default function PurchasesPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  useEffect(() => {
-    const handleClickOutside = () => setOpenMenuId(null);
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
-
   const openCreate = () => { setEditing(null); setForm(emptyForm); setError(''); setShowModal(true); };
   const openEdit = (p: FuturePurchase) => {
     setEditing(p);
@@ -97,7 +91,7 @@ export default function PurchasesPage() {
         <div style={{ position: 'relative' }}>
           <button 
             className="btn btn-ghost btn-sm btn-icon" 
-            onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === p.id ? null : p.id); }}
+            onClick={() => setOpenMenuId(openMenuId === p.id ? null : p.id)}
             title="Opções"
             style={{ fontSize: '1.2rem', padding: '0 8px' }}
           >
@@ -106,15 +100,15 @@ export default function PurchasesPage() {
           {openMenuId === p.id && (
             <div className={styles.menuDropdown}>
               <button 
-                onClick={(e) => { e.stopPropagation(); togglePurchased(p); setOpenMenuId(null); }} 
+                onClick={() => { togglePurchased(p); setOpenMenuId(null); }} 
                 className={isPurchased ? '' : styles.success}
               >
                 {isPurchased ? '❌ Desmarcar' : '✅ Marcar como realizada'}
               </button>
-              <button onClick={(e) => { e.stopPropagation(); openEdit(p); setOpenMenuId(null); }}>
+              <button onClick={() => { openEdit(p); setOpenMenuId(null); }}>
                 ✏️ Editar
               </button>
-              <button onClick={(e) => { e.stopPropagation(); remove(p.id); setOpenMenuId(null); }} className={styles.danger}>
+              <button onClick={() => { remove(p.id); setOpenMenuId(null); }} className={styles.danger}>
                 🗑️ Excluir
               </button>
             </div>
@@ -126,6 +120,10 @@ export default function PurchasesPage() {
 
   return (
     <div className="animate-fade-in">
+      {openMenuId && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9 }} onClick={() => setOpenMenuId(null)} />
+      )}
+      
       <div className="page-header">
         <div>
           <h1 className="page-title">Compras Futuras</h1>
