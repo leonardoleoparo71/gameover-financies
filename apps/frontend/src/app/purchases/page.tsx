@@ -76,7 +76,7 @@ export default function PurchasesPage() {
   const total = toBuy.reduce((s, p) => s + p.value, 0);
 
   const renderCard = (p: FuturePurchase, isPurchased: boolean) => (
-    <div key={p.id} className={`${styles.purchaseCard} ${isPurchased ? styles.purchased : ''}`}>
+    <div key={p.id} className={`${styles.purchaseCard} ${isPurchased ? styles.purchased : ''}`} style={{ zIndex: openMenuId === p.id ? 11 : undefined }}>
       {p.imageUrl && (
         <div className={styles.cardImg}>
           <Image src={p.imageUrl} alt={p.name} fill style={{ objectFit: 'cover' }} unoptimized />
