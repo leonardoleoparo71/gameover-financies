@@ -51,6 +51,7 @@ model FuturePurchase {
   value       Float
   link        String?
   imageUrl    String?
+  purchased   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

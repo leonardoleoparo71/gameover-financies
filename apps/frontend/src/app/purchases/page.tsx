@@ -22,6 +22,7 @@ export default function PurchasesPage() {
   const [form, setForm] = useState<FormData>(emptyForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -30,6 +31,12 @@ export default function PurchasesPage() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    const handleClickOutside = () => setOpenMenuId(null);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   const openCreate = () => { setEditing(null); setForm(emptyForm); setError(''); setShowModal(true); };
   const openEdit = (p: FuturePurchase) => {
@@ -56,7 +63,66 @@ export default function PurchasesPage() {
     await api.deletePurchase(id); await load();
   };
 
-  const total = purchases.reduce((s, p) => s + p.value, 0);
+  const togglePurchased = async (p: FuturePurchase) => {
+    try {
+      await api.updatePurchase(p.id, { purchased: !p.purchased });
+      await load();
+    } catch {
+      setError('Erro ao atualizar status');
+    }
+  };
+
+  const toBuy = purchases.filter(p => !p.purchased);
+  const purchasedList = purchases.filter(p => p.purchased);
+  const total = toBuy.reduce((s, p) => s + p.value, 0);
+
+  const renderCard = (p: FuturePurchase, isPurchased: boolean) => (
+    <div key={p.id} className={`${styles.purchaseCard} ${isPurchased ? styles.purchased : ''}`}>
+      {p.imageUrl && (
+        <div className={styles.cardImg}>
+          <Image src={p.imageUrl} alt={p.name} fill style={{ objectFit: 'cover' }} unoptimized />
+        </div>
+      )}
+      <div className={styles.cardBody}>
+        <div className={styles.cardName}>{p.name}</div>
+        {p.description && <p className={styles.cardDesc}>{p.description}</p>}
+        <div className={styles.cardValue}>{fmt(p.value)}</div>
+        {p.link && (
+          <a href={p.link} target="_blank" rel="noopener noreferrer" className={styles.cardLink}>
+            🔗 Ver produto
+          </a>
+        )}
+      </div>
+      <div className={styles.cardActions}>
+        <div style={{ position: 'relative' }}>
+          <button 
+            className="btn btn-ghost btn-sm btn-icon" 
+            onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === p.id ? null : p.id); }}
+            title="Opções"
+            style={{ fontSize: '1.2rem', padding: '0 8px' }}
+          >
+            •••
+          </button>
+          {openMenuId === p.id && (
+            <div className={styles.menuDropdown}>
+              <button 
+                onClick={(e) => { e.stopPropagation(); togglePurchased(p); setOpenMenuId(null); }} 
+                className={isPurchased ? '' : styles.success}
+              >
+                {isPurchased ? '❌ Desmarcar' : '✅ Marcar como realizada'}
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); openEdit(p); setOpenMenuId(null); }}>
+                ✏️ Editar
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); remove(p.id); setOpenMenuId(null); }} className={styles.danger}>
+                🗑️ Excluir
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="animate-fade-in">
@@ -64,7 +130,7 @@ export default function PurchasesPage() {
         <div>
           <h1 className="page-title">Compras Futuras</h1>
           <p className="page-subtitle">
-            {loading ? <span className="skeleton" style={{ width: '120px', height: '14px', display: 'inline-block' }} /> : `${purchases.length} ${purchases.length === 1 ? 'item planejado' : 'itens planejados'} · Total: ${fmt(total)}`}
+            {loading ? <span className="skeleton" style={{ width: '120px', height: '14px', display: 'inline-block' }} /> : `${toBuy.length} ${toBuy.length === 1 ? 'item planejado' : 'itens planejados'} · Total: ${fmt(total)}`}
           </p>
         </div>
         <button className="btn btn-primary" onClick={openCreate} disabled={loading}>+ Nova Compra</button>
@@ -90,31 +156,23 @@ export default function PurchasesPage() {
           <button className="btn btn-primary" onClick={openCreate}>+ Adicionar</button>
         </div>
       ) : (
-        <div className={`grid-auto`}>
-          {purchases.map(p => (
-            <div key={p.id} className={styles.purchaseCard}>
-              {p.imageUrl && (
-                <div className={styles.cardImg}>
-                  <Image src={p.imageUrl} alt={p.name} fill style={{ objectFit: 'cover' }} unoptimized />
-                </div>
-              )}
-              <div className={styles.cardBody}>
-                <div className={styles.cardName}>{p.name}</div>
-                {p.description && <p className={styles.cardDesc}>{p.description}</p>}
-                <div className={styles.cardValue}>{fmt(p.value)}</div>
-                {p.link && (
-                  <a href={p.link} target="_blank" rel="noopener noreferrer" className={styles.cardLink}>
-                    🔗 Ver produto
-                  </a>
-                )}
-              </div>
-              <div className={styles.cardActions}>
-                <button className="btn btn-ghost btn-sm btn-icon" onClick={() => openEdit(p)}>✏️</button>
-                <button className="btn btn-ghost btn-sm btn-icon" onClick={() => remove(p.id)}>🗑️</button>
+        <>
+          {toBuy.length > 0 && (
+            <div className={`grid-auto`}>
+              {toBuy.map(p => renderCard(p, false))}
+            </div>
+          )}
+          
+          {purchasedList.length > 0 && (
+            <div style={{ marginTop: '2rem' }}>
+              <hr className={styles.sectionDivider} />
+              <div className={styles.sectionTitleRed}>compras conquistadas</div>
+              <div className={`grid-auto`}>
+                {purchasedList.map(p => renderCard(p, true))}
               </div>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
 
       {showModal && (

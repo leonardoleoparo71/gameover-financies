@@ -34,7 +34,7 @@ router.post('/register', async (req: Request, res: Response) => {
   });
 
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-    expiresIn: '12h',
+    expiresIn: '30d',
   });
 
   // Disparar envio de email assíncrono para o fundo (não trava a resposta)
@@ -72,7 +72,7 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-    expiresIn: '12h',
+    expiresIn: '30d',
   });
 
   res.cookie('token', token, {

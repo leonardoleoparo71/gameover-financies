@@ -13,6 +13,7 @@ const PurchaseSchema = z.object({
   value: z.coerce.number().positive(),
   link: z.union([z.string().url(), z.literal('')]).optional().nullable(),
   imageUrl: z.union([z.string().url(), z.literal('')]).optional().nullable(),
+  purchased: z.boolean().optional().default(false),
 });
 
 const UpdatePurchaseSchema = PurchaseSchema.partial();
@@ -40,6 +41,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
         value: data.value,
         link: data.link || null,
         imageUrl: data.imageUrl || null,
+        purchased: data.purchased,
       },
     });
     res.status(201).json(p);
@@ -69,6 +71,7 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
         ...(data.value !== undefined && { value: data.value }),
         ...(data.link !== undefined && { link: data.link }),
         ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
+        ...(data.purchased !== undefined && { purchased: data.purchased }),
       },
     });
     res.json(p);

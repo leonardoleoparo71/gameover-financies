@@ -108,6 +108,7 @@ export interface FuturePurchase {
   value: number;
   link?: string;
   imageUrl?: string;
+  purchased: boolean;
   createdAt: string;
 }
 
