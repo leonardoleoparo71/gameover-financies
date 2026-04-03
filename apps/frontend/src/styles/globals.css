@@ -478,8 +478,20 @@ a:hover { color: var(--brand-primary); }
   color: var(--text-muted);
   text-align: center;
 }
-.empty-state-icon { font-size: 3rem; opacity: 0.4; }
-.empty-state-text { font-size: 0.9rem; max-width: 320px; }
+.empty-state-icon { 
+  font-size: 3.5rem; 
+  opacity: 0.8; 
+  animation: floatSubtle 4s ease-in-out infinite;
+  display: inline-block;
+  margin-bottom: var(--space-2);
+}
+
+@keyframes floatSubtle {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
+}
+
+.empty-state-text { font-size: 0.9rem; max-width: 320px; line-height: 1.5; margin-bottom: var(--space-2); }
 
 /* ─── Page Header ────────────────────────────────────────────────────────────── */
 .page-header {

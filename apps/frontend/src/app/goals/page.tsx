@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { api, Goal, Summary } from '@/lib/api';
+import { toast } from 'sonner';
 import styles from './page.module.css';
 
 function fmt(n: number) {
@@ -26,6 +27,7 @@ export default function GoalsPage() {
   const [form, setForm] = useState<FormData>(emptyForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [itemToDelete, setItemToDelete] = useState<Goal | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -66,27 +68,32 @@ export default function GoalsPage() {
     try {
       if (isEdit) {
         await api.updateGoal(editId!, payload);
+        toast.success('Meta atualizada');
       } else {
         const result = await api.createGoal(payload);
         setGoals(prev => prev.map(g => g.id === tempId ? result : g));
+        toast.success('Meta criada');
       }
     } catch (e: unknown) { 
-      alert(e instanceof Error ? "Erro ao salvar meta. " + e.message : 'Erro ao salvar. Revertendo...');
+      toast.error(e instanceof Error ? "Erro ao salvar meta. " + e.message : 'Erro ao salvar. Revertendo...');
       setGoals(oldGoals);
     }
   };
 
-  const remove = async (id: string) => {
-    if (!confirm('Remover esta meta?')) return;
+  const confirmRemove = async () => {
+    if (!itemToDelete) return;
+    const id = itemToDelete.id;
     const oldGoals = [...goals];
     
     // Fast-remove
     setGoals(prev => prev.filter(g => g.id !== id));
+    setItemToDelete(null);
     
     try {
       await api.deleteGoal(id);
+      toast.success('Meta removida');
     } catch (e: unknown) {
-      alert(e instanceof Error ? "Erro ao deletar: " + e.message : "Erro ao remover meta.");
+      toast.error(e instanceof Error ? "Erro ao deletar: " + e.message : "Erro ao remover meta.");
       setGoals(oldGoals);
     }
   };
@@ -150,7 +157,7 @@ export default function GoalsPage() {
                   <span className={styles.goalName}>🎯 {g.name}</span>
                   <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
                     <button className="btn btn-ghost btn-sm btn-icon" onClick={() => openEdit(g)}>✏️</button>
-                    <button className="btn btn-ghost btn-sm btn-icon" onClick={() => remove(g.id)}>🗑️</button>
+                    <button className="btn btn-ghost btn-sm btn-icon" onClick={() => setItemToDelete(g)}>🗑️</button>
                   </div>
                 </div>
 
@@ -216,6 +223,28 @@ export default function GoalsPage() {
               <button className="btn btn-secondary" onClick={close}>Cancelar</button>
               <button className="btn btn-primary" onClick={save} disabled={saving}>
                 {saving ? 'Salvando...' : editing ? 'Salvar' : 'Criar Meta'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {itemToDelete && (
+        <div className="modal-backdrop" onClick={e => { if (e.target === e.currentTarget) setItemToDelete(null); }}>
+          <div className="modal" style={{ maxWidth: '400px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title" style={{ color: 'var(--brand-danger)' }}>Remover Meta</h3>
+              <button className="btn btn-ghost btn-icon" onClick={() => setItemToDelete(null)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p style={{ color: 'var(--text-secondary)' }}>
+                Tem certeza que deseja remover a meta <strong>{itemToDelete.name}</strong>? Todo o progresso será deletado.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setItemToDelete(null)}>Cancelar</button>
+              <button className="btn btn-primary" style={{ background: 'var(--brand-danger)', color: '#fff', borderColor: 'transparent' }} onClick={confirmRemove}>
+                Sim, remover
               </button>
             </div>
           </div>

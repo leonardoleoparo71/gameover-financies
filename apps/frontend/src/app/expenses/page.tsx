@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { api, Transaction } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 import styles from './page.module.css';
 
 const CATEGORIES = [
@@ -53,6 +54,7 @@ export default function ExpensesPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
+  const [itemToDelete, setItemToDelete] = useState<Transaction | null>(null);
 
   const now = new Date();
   const [month] = useState(now.getMonth() + 1);
@@ -104,27 +106,32 @@ export default function ExpensesPage() {
     try {
       if (isEdit) {
         await api.updateTransaction(editId!, payload);
+        toast.success('Alteração salva com sucesso');
       } else {
         const result = await api.createTransaction(payload);
         setTransactions(prev => prev.map(t => t.id === tempId ? result : t));
+        toast.success('Transação adicionada');
       }
     } catch (e: unknown) {
-      alert(e instanceof Error ? "Erro ao salvar transação. " + e.message : 'Erro ao salvar. Revertendo...');
+      toast.error(e instanceof Error ? "Erro ao salvar transação. " + e.message : 'Erro ao salvar. Revertendo...');
       setTransactions(oldTransactions);
     }
   };
 
-  const remove = async (id: string) => {
-    if (!confirm('Remover esta transação?')) return;
+  const confirmRemove = async () => {
+    if (!itemToDelete) return;
+    const id = itemToDelete.id;
     const oldTransactions = [...transactions];
     
     // Fast-remove
     setTransactions(prev => prev.filter(t => t.id !== id));
+    setItemToDelete(null);
     
     try {
       await api.deleteTransaction(id);
+      toast.success('Transação excluída');
     } catch (e: unknown) {
-      alert(e instanceof Error ? "Erro ao tentar remover. " + e.message : 'Erro ao deletar. Revertendo...');
+      toast.error(e instanceof Error ? "Erro ao tentar remover. " + e.message : 'Erro ao deletar. Revertendo...');
       setTransactions(oldTransactions);
     }
   };
@@ -132,8 +139,8 @@ export default function ExpensesPage() {
   const saveSnapshot = async () => {
     try {
       await api.saveSnapshot();
-      alert('Snapshot do mês salvo!');
-    } catch { alert('Erro ao salvar snapshot'); }
+      toast.success('Snapshot do mês salvo!');
+    } catch { toast.error('Erro ao salvar snapshot'); }
   };
 
   const totalIncome = useMemo(() => {
@@ -274,7 +281,7 @@ export default function ExpensesPage() {
                   {!isSalary && (
                     <>
                       <button className="btn btn-ghost btn-sm btn-icon" onClick={() => openEdit(t)}>✏️</button>
-                      <button className="btn btn-ghost btn-sm btn-icon" onClick={() => remove(t.id)}>🗑️</button>
+                      <button className="btn btn-ghost btn-sm btn-icon" onClick={() => setItemToDelete(t)}>🗑️</button>
                     </>
                   )}
                 </div>
@@ -331,6 +338,28 @@ export default function ExpensesPage() {
               <button className="btn btn-secondary" onClick={close}>Cancelar</button>
               <button className="btn btn-primary" onClick={save} disabled={saving}>
                 {saving ? 'Salvando...' : editing ? 'Salvar Alterações' : 'Adicionar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {itemToDelete && (
+        <div className="modal-backdrop" onClick={e => { if (e.target === e.currentTarget) setItemToDelete(null); }}>
+          <div className="modal" style={{ maxWidth: '400px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title" style={{ color: 'var(--brand-danger)' }}>Excluir Transação</h3>
+              <button className="btn btn-ghost btn-icon" onClick={() => setItemToDelete(null)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p style={{ color: 'var(--text-secondary)' }}>
+                Tem certeza que deseja excluir <strong>{itemToDelete.name}</strong>? Esta ação não pode ser desfeita.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setItemToDelete(null)}>Cancelar</button>
+              <button className="btn btn-primary" style={{ background: 'var(--brand-danger)', color: '#fff', borderColor: 'transparent' }} onClick={confirmRemove}>
+                Sim, excluir
               </button>
             </div>
           </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { api, FuturePurchase } from '@/lib/api';
 import Image from 'next/image';
+import { toast } from 'sonner';
 import styles from './page.module.css';
 
 function fmt(n: number) {
@@ -62,12 +63,14 @@ export default function PurchasesPage() {
     try {
       if (isEdit) {
         await api.updatePurchase(editId!, payload);
+        toast.success('Compra atualizada');
       } else {
         const result = await api.createPurchase(payload);
         setPurchases(prev => prev.map(p => p.id === tempId ? result : p));
+        toast.success('Planejamento de compra adicionado');
       }
     } catch (e: unknown) { 
-      alert(e instanceof Error ? "Erro ao salvar compra. " + e.message : 'Erro ao salvar... Revertendo.');
+      toast.error(e instanceof Error ? "Erro ao salvar compra. " + e.message : 'Erro ao salvar... Revertendo.');
       setPurchases(oldPurchases);
     }
   };
@@ -83,8 +86,9 @@ export default function PurchasesPage() {
 
     try {
       await api.deletePurchase(id); 
+      toast.success('Item excluído da lista');
     } catch (e: any) {
-      alert(`Erro ao excluir: ${e.message || 'Desconhecido'}`);
+      toast.error(`Erro ao excluir: ${e.message || 'Desconhecido'}`);
       setPurchases(oldPurchases);
     }
   };
@@ -96,8 +100,9 @@ export default function PurchasesPage() {
     
     try {
       await api.updatePurchase(p.id, { purchased: !p.purchased });
+      toast.success(p.purchased ? 'Marcado como pendente' : 'Compra realizada! 🎉');
     } catch (e: any) {
-      alert(`Não foi possível marcar a compra: ${e.message || 'Tente novamente.'}`);
+      toast.error(`Não foi possível marcar a compra: ${e.message || 'Tente novamente.'}`);
       setPurchases(oldPurchases);
     }
   };
