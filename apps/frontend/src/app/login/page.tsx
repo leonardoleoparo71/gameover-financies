@@ -4,15 +4,17 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
+import { GoogleLogin } from '@react-oauth/google';
 import styles from '../auth.module.css';
 
 export default function LoginPage() {
-  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const { login, loginWithGoogle } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,8 +40,36 @@ export default function LoginPage() {
           <p className={styles.subtitle}>Faça login para continuar sua jornada</p>
         </div>
 
+        {error && <div className={styles.error} style={{ marginBottom: '20px' }}>{error}</div>}
+
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              try {
+                setLoading(true);
+                if (credentialResponse.credential) await loginWithGoogle(credentialResponse.credential);
+              } catch (err: any) {
+                setError(err.message || 'Erro no login com Google');
+                setLoading(false);
+              }
+            }}
+            onError={() => {
+              setError('Falha no login com Google. Verifique a configuração.');
+            }}
+            useOneTap
+            theme="filled_black"
+            shape="pill"
+            text="continue_with"
+          />
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+          <hr style={{ flex: 1, borderColor: '#1f2937', borderTop: 'none' }} />
+          <span style={{ padding: '0 10px', color: '#6b7280', fontSize: '0.875rem' }}>OU COM E-MAIL</span>
+          <hr style={{ flex: 1, borderColor: '#1f2937', borderTop: 'none' }} />
+        </div>
+
         <form onSubmit={handleSubmit} className={styles.form}>
-          {error && <div className={styles.error}>{error}</div>}
 
           <div className="form-group">
             <label className="form-label">Email</label>

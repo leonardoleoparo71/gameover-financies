@@ -39,6 +39,8 @@ export const api = {
     request('/auth/register', { method: 'POST', body: JSON.stringify(data) }),
   login: (data: { email: string; password: string }) =>
     request('/auth/login', { method: 'POST', body: JSON.stringify(data) }),
+  googleLogin: (token: string) =>
+    request('/auth/google', { method: 'POST', body: JSON.stringify({ token }) }),
   logout: () => request('/auth/logout', { method: 'POST' }),
   me: () => request<{ user: User }>('/auth/me'),
   updateProfile: (data: Partial<User>) =>
@@ -98,6 +100,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  avatarUrl?: string;
   salary: number;
   createdAt: string;
 }

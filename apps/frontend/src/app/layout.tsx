@@ -5,6 +5,7 @@ import AppShell from '@/components/AppShell/AppShell';
 import GlobalLoader from '@/components/GlobalLoader/GlobalLoader';
 import BackToTop from '@/components/BackToTop';
 import { Toaster } from 'sonner';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 export const metadata: Metadata = {
   title: 'GameOver — Finanças Pessoais & Planejamento Visual',
@@ -20,9 +21,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <GlobalLoader>
           <AuthProvider>
-            <AppShell>{children}</AppShell>
-            <BackToTop />
-            <Toaster theme="dark" position="top-right" richColors />
+            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'mock_client_id'}>
+              <AppShell>{children}</AppShell>
+              <BackToTop />
+              <Toaster theme="dark" position="top-right" richColors />
+            </GoogleOAuthProvider>
           </AuthProvider>
         </GlobalLoader>
       </body>

@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
+import { GoogleLogin } from '@react-oauth/google';
 import styles from '../auth.module.css';
 
 export default function RegisterPage() {
-  const { register } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,8 +48,36 @@ export default function RegisterPage() {
           <p className={styles.subtitle}>Comece sua jornada financeira épica</p>
         </div>
 
+        {error && <div className={styles.error} style={{ marginBottom: '20px' }}>{error}</div>}
+
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              try {
+                setLoading(true);
+                if (credentialResponse.credential) await loginWithGoogle(credentialResponse.credential);
+              } catch (err: any) {
+                setError(err.message || 'Erro no login com Google');
+                setLoading(false);
+              }
+            }}
+            onError={() => {
+              setError('Falha ao criar conta com Google. Verifique a configuração.');
+            }}
+            useOneTap
+            theme="filled_black"
+            shape="pill"
+            text="continue_with"
+          />
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+          <hr style={{ flex: 1, borderColor: '#1f2937', borderTop: 'none' }} />
+          <span style={{ padding: '0 10px', color: '#6b7280', fontSize: '0.875rem' }}>OU COM E-MAIL</span>
+          <hr style={{ flex: 1, borderColor: '#1f2937', borderTop: 'none' }} />
+        </div>
+
         <form onSubmit={handleSubmit} className={styles.form}>
-          {error && <div className={styles.error}>{error}</div>}
 
           <div className="form-group">
             <label className="form-label">Nome</label>
