@@ -47,19 +47,48 @@ export default function GoalsPage() {
 
   const save = async () => {
     if (!form.name || !form.targetValue) { setError('Nome e valor alvo são obrigatórios'); return; }
-    setSaving(true); setError('');
+    
+    const payload = { name: form.name, targetValue: parseFloat(form.targetValue), deadline: form.deadline ? new Date(form.deadline).toISOString() : undefined };
+    const tempId = editing ? editing.id : `temp-${Date.now()}`;
+    const oldGoals = [...goals];
+    const isEdit = !!editing;
+    const editId = editing?.id;
+
+    // Optimistic fast UI update
+    if (isEdit) {
+      setGoals(prev => prev.map(g => g.id === editId ? { ...g, ...payload, deadline: payload.deadline } as any : g));
+    } else {
+      const newTemp = { ...payload, id: tempId, userId: '', createdAt: new Date().toISOString() } as Goal;
+      setGoals(prev => [newTemp, ...prev]);
+    }
+    close();
+
     try {
-      const payload = { name: form.name, targetValue: parseFloat(form.targetValue), deadline: form.deadline || undefined };
-      if (editing) await api.updateGoal(editing.id, payload);
-      else await api.createGoal(payload);
-      await load(); close();
-    } catch (e: unknown) { setError(e instanceof Error ? e.message : 'Erro ao salvar'); }
-    finally { setSaving(false); }
+      if (isEdit) {
+        await api.updateGoal(editId!, payload);
+      } else {
+        const result = await api.createGoal(payload);
+        setGoals(prev => prev.map(g => g.id === tempId ? result : g));
+      }
+    } catch (e: unknown) { 
+      alert(e instanceof Error ? "Erro ao salvar meta. " + e.message : 'Erro ao salvar. Revertendo...');
+      setGoals(oldGoals);
+    }
   };
 
   const remove = async (id: string) => {
     if (!confirm('Remover esta meta?')) return;
-    await api.deleteGoal(id); await load();
+    const oldGoals = [...goals];
+    
+    // Fast-remove
+    setGoals(prev => prev.filter(g => g.id !== id));
+    
+    try {
+      await api.deleteGoal(id);
+    } catch (e: unknown) {
+      alert(e instanceof Error ? "Erro ao deletar: " + e.message : "Erro ao remover meta.");
+      setGoals(oldGoals);
+    }
   };
 
   // Progress = saved this month / target

@@ -2,30 +2,35 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 async function request<T>(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  retries = 1
 ): Promise<T> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('gameover_token') : null;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(options.headers as any || {}),
+    ...((options.headers as any) || {}),
   };
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+  try {
+    const res = await fetch(`${API_URL}${path}`, {
+      ...options,
+      credentials: 'include',
+      headers,
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Erro desconhecido' }));
+      throw new Error(err.message || err.error || `Erro ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error: any) {
+    // Retry on network errors
+    if (retries > 0 && /Failed to fetch|NetworkError|fetch/i.test(error.message)) {
+      await new Promise(r => setTimeout(r, 1000));
+      return request(path, options, retries - 1);
+    }
+    throw error;
   }
-
-  const res = await fetch(`${API_URL}${path}`, {
-    ...options,
-    credentials: 'include',
-    headers,
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: 'Erro desconhecido' }));
-    throw new Error(err.message || err.error || `Erro ${res.status}`);
-  }
-
-  return res.json();
 }
 
 export const api = {

@@ -43,33 +43,62 @@ export default function PurchasesPage() {
 
   const save = async () => {
     if (!form.name || !form.value) { setError('Nome e valor são obrigatórios'); return; }
-    setSaving(true); setError('');
+    
+    const payload = { ...form, value: parseFloat(form.value) };
+    const tempId = editing ? editing.id : `temp-${Date.now()}`;
+    const oldPurchases = [...purchases];
+    const isEdit = !!editing;
+    const editId = editing?.id;
+
+    // Optimistic Update
+    if (isEdit) {
+      setPurchases(prev => prev.map(p => p.id === editId ? { ...p, ...payload } as any : p));
+    } else {
+      const newTemp = { ...payload, id: tempId, userId: '', purchased: false, createdAt: new Date().toISOString() } as FuturePurchase;
+      setPurchases(prev => [newTemp, ...prev]);
+    }
+    close();
+
     try {
-      const payload = { ...form, value: parseFloat(form.value) };
-      if (editing) await api.updatePurchase(editing.id, payload);
-      else await api.createPurchase(payload);
-      await load(); close();
-    } catch (e: unknown) { setError(e instanceof Error ? e.message : 'Erro ao salvar'); }
-    finally { setSaving(false); }
+      if (isEdit) {
+        await api.updatePurchase(editId!, payload);
+      } else {
+        const result = await api.createPurchase(payload);
+        setPurchases(prev => prev.map(p => p.id === tempId ? result : p));
+      }
+    } catch (e: unknown) { 
+      alert(e instanceof Error ? "Erro ao salvar compra. " + e.message : 'Erro ao salvar... Revertendo.');
+      setPurchases(oldPurchases);
+    }
   };
 
   const confirmRemove = async () => {
     if (!itemToDelete) return;
+    const id = itemToDelete.id;
+    const oldPurchases = [...purchases];
+    
+    // Fast-remove
+    setPurchases(prev => prev.filter(p => p.id !== id));
+    setItemToDelete(null);
+
     try {
-      await api.deletePurchase(itemToDelete.id); 
-      setItemToDelete(null);
-      await load();
+      await api.deletePurchase(id); 
     } catch (e: any) {
       alert(`Erro ao excluir: ${e.message || 'Desconhecido'}`);
+      setPurchases(oldPurchases);
     }
   };
 
   const togglePurchased = async (p: FuturePurchase) => {
+    const oldPurchases = [...purchases];
+    // Optimistic fast toggle
+    setPurchases(prev => prev.map(item => item.id === p.id ? { ...item, purchased: !item.purchased } : item));
+    
     try {
       await api.updatePurchase(p.id, { purchased: !p.purchased });
-      await load();
     } catch (e: any) {
       alert(`Não foi possível marcar a compra: ${e.message || 'Tente novamente.'}`);
+      setPurchases(oldPurchases);
     }
   };
 

@@ -47,7 +47,7 @@ router.post('/register', async (req: Request, res: Response) => {
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   });
 
-  res.status(201).json({ user, token });
+  res.status(201).json({ user });
 });
 
 // POST /auth/login
@@ -84,7 +84,6 @@ router.post('/login', async (req: Request, res: Response) => {
 
   res.json({
     user: { id: user.id, name: user.name, email: user.email, createdAt: user.createdAt },
-    token,
   });
 });
 
@@ -111,9 +110,11 @@ router.post('/forgot-password', async (req: Request, res: Response) => {
   
   // Por segurança, não confirmamos se o email existe ou não (prevenção de enumeração)
   if (user) {
+    // Secret contains user password, if password is changed, token is invalidated
+    const secret = process.env.JWT_SECRET! + user.password;
     const resetToken = jwt.sign(
       { userId: user.id, purpose: 'reset-password' }, 
-      process.env.JWT_SECRET!, 
+      secret, 
       { expiresIn: '1h' }
     );
     
@@ -139,12 +140,21 @@ router.post('/reset-password', async (req: Request, res: Response) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string, purpose: string };
-    
-    if (decoded.purpose !== 'reset-password') {
+    // Decode first to get the user id
+    const decodedPayload = jwt.decode(token) as { userId: string, purpose: string } | null;
+    if (!decodedPayload || decodedPayload.purpose !== 'reset-password') {
       res.status(400).json({ error: 'Token inválido para esta operação' });
       return;
     }
+
+    const user = await prisma.user.findUnique({ where: { id: decodedPayload.userId } });
+    if (!user) {
+      res.status(400).json({ error: 'Usuário não encontrado' });
+      return;
+    }
+
+    const secret = process.env.JWT_SECRET! + user.password;
+    const decoded = jwt.verify(token, secret) as { userId: string, purpose: string };
 
     const hashed = await bcrypt.hash(newPassword, 12);
     await prisma.user.update({

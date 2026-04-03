@@ -79,22 +79,54 @@ export default function ExpensesPage() {
 
   const save = async () => {
     if (!form.name || !form.amount) { setError('Preencha nome e valor'); return; }
-    setSaving(true); setError('');
+    
+    const payload = { ...form, amount: parseFloat(form.amount) };
+    const tempId = editing ? editing.id : `temp-${Date.now()}`;
+    const oldTransactions = [...transactions];
+    const isEdit = !!editing;
+    const editId = editing?.id;
+
+    // Optimistic Update: Modifica estado local e Fecha Modal Imediatamente
+    if (isEdit) {
+      setTransactions(prev => prev.map(t => t.id === editId ? { ...t, ...payload } as any : t));
+    } else {
+      const newTemp = { 
+        ...payload, 
+        id: tempId, 
+        userId: user?.id || '', 
+        date: payload.date ? new Date(payload.date).toISOString() : new Date().toISOString() 
+      } as unknown as Transaction;
+      setTransactions(prev => [newTemp, ...prev]);
+    }
+    close();
+
+    // Background Processing
     try {
-      const payload = { ...form, amount: parseFloat(form.amount) };
-      if (editing) await api.updateTransaction(editing.id, payload);
-      else await api.createTransaction(payload);
-      await load();
-      close();
+      if (isEdit) {
+        await api.updateTransaction(editId!, payload);
+      } else {
+        const result = await api.createTransaction(payload);
+        setTransactions(prev => prev.map(t => t.id === tempId ? result : t));
+      }
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Erro ao salvar');
-    } finally { setSaving(false); }
+      alert(e instanceof Error ? "Erro ao salvar transação. " + e.message : 'Erro ao salvar. Revertendo...');
+      setTransactions(oldTransactions);
+    }
   };
 
   const remove = async (id: string) => {
     if (!confirm('Remover esta transação?')) return;
-    await api.deleteTransaction(id);
-    await load();
+    const oldTransactions = [...transactions];
+    
+    // Fast-remove
+    setTransactions(prev => prev.filter(t => t.id !== id));
+    
+    try {
+      await api.deleteTransaction(id);
+    } catch (e: unknown) {
+      alert(e instanceof Error ? "Erro ao tentar remover. " + e.message : 'Erro ao deletar. Revertendo...');
+      setTransactions(oldTransactions);
+    }
   };
 
   const saveSnapshot = async () => {
