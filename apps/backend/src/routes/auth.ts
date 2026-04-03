@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
@@ -10,8 +11,16 @@ import { sendWelcomeEmail, sendResetPasswordEmail, sendLoginAlertEmail, sendPass
 const router = Router();
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 auth requests per `window` (here, per 15 minutes)
+  message: { error: 'Muitas tentativas de autenticação, tente novamente mais tarde.' },
+  standardHeaders: true, 
+  legacyHeaders: false, 
+});
+
 // POST /auth/register
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/register', authLimiter, async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -53,7 +62,7 @@ router.post('/register', async (req: Request, res: Response) => {
 });
 
 // POST /auth/login
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', authLimiter, async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -94,7 +103,7 @@ router.post('/login', async (req: Request, res: Response) => {
 });
 
 // POST /auth/google
-router.post('/google', async (req: Request, res: Response) => {
+router.post('/google', authLimiter, async (req: Request, res: Response) => {
   const { token } = req.body;
   if (!token) {
     res.status(400).json({ error: 'Token do Google obrigatório' });
@@ -161,7 +170,7 @@ router.post('/logout', (_req: Request, res: Response) => {
 });
 
 // POST /auth/forgot-password
-router.post('/forgot-password', async (req: Request, res: Response) => {
+router.post('/forgot-password', authLimiter, async (req: Request, res: Response) => {
   const { email } = req.body;
 
   if (!email) {
@@ -187,7 +196,7 @@ router.post('/forgot-password', async (req: Request, res: Response) => {
 });
 
 // POST /auth/reset-password
-router.post('/reset-password', async (req: Request, res: Response) => {
+router.post('/reset-password', authLimiter, async (req: Request, res: Response) => {
   const { token, newPassword } = req.body;
 
   if (!token || !newPassword) {

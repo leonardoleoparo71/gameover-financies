@@ -20,7 +20,7 @@ const UpdateTransactionSchema = TransactionSchema.partial();
 // GET /transactions
 router.get('/', async (req: AuthRequest, res: Response) => {
   const { month, year } = req.query;
-  const where: Record<string, unknown> = { userId: req.userId! };
+  const where: Record<string, unknown> = { userId: req.userId!, deletedAt: null };
 
   // Defesa nativa: Omitiu data? Entrega o mês corrente. Sem dump massivo do banco!
   const targetYear = year ? Number(year) : new Date().getFullYear();
@@ -67,7 +67,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 // PUT /transactions/:id
 router.put('/:id', async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  const existing = await prisma.transaction.findFirst({ where: { id, userId: req.userId! } });
+  const existing = await prisma.transaction.findFirst({ where: { id, userId: req.userId!, deletedAt: null } });
   if (!existing) { res.status(404).json({ error: 'Transação não encontrada' }); return; }
 
   try {
@@ -96,11 +96,11 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
 // DELETE /transactions/:id
 router.delete('/:id', async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  const existing = await prisma.transaction.findFirst({ where: { id, userId: req.userId! } });
+  const existing = await prisma.transaction.findFirst({ where: { id, userId: req.userId!, deletedAt: null } });
   if (!existing) { res.status(404).json({ error: 'Transação não encontrada' }); return; }
 
-  await prisma.transaction.delete({ where: { id } });
-  res.json({ message: 'Transação removida' });
+  await prisma.transaction.update({ where: { id }, data: { deletedAt: new Date() } });
+  res.json({ message: 'Transação removida logicamente' });
 });
 
 export default router;

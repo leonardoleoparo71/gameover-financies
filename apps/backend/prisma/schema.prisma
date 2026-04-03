@@ -40,10 +40,11 @@ model Transaction {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  deletedAt DateTime?
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
-  @@index([date])
+  @@index([userId, date(sort: Desc)])
 }
 
 model FuturePurchase {
@@ -58,6 +59,8 @@ model FuturePurchase {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  deletedAt   DateTime?
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -71,6 +74,8 @@ model Goal {
   deadline    DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  deletedAt   DateTime?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -107,6 +112,8 @@ model TreeNode {
   positionY   Float      @default(0)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+
+  deletedAt   DateTime?
 
   parent   TreeNode?  @relation("NodeChildren", fields: [parentId], references: [id], onDelete: SetNull)
   children TreeNode[] @relation("NodeChildren")

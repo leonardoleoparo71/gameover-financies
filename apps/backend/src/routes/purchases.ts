@@ -27,7 +27,7 @@ const UpdatePurchaseSchema = z.object({
 // GET /purchases
 router.get('/', async (req: AuthRequest, res: Response) => {
   const purchases = await prisma.futurePurchase.findMany({
-    where: { userId: req.userId! },
+    where: { userId: req.userId!, deletedAt: null },
     orderBy: { createdAt: 'desc' },
     take: 100, // Clamp
   });
@@ -63,7 +63,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 // PUT /purchases/:id
 router.put('/:id', async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  const existing = await prisma.futurePurchase.findFirst({ where: { id, userId: req.userId! } });
+  const existing = await prisma.futurePurchase.findFirst({ where: { id, userId: req.userId!, deletedAt: null } });
   if (!existing) { res.status(404).json({ error: 'Compra não encontrada' }); return; }
 
   try {
@@ -93,11 +93,11 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
 // DELETE /purchases/:id
 router.delete('/:id', async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  const existing = await prisma.futurePurchase.findFirst({ where: { id, userId: req.userId! } });
+  const existing = await prisma.futurePurchase.findFirst({ where: { id, userId: req.userId!, deletedAt: null } });
   if (!existing) { res.status(404).json({ error: 'Compra não encontrada' }); return; }
 
-  await prisma.futurePurchase.delete({ where: { id } });
-  res.json({ message: 'Compra removida' });
+  await prisma.futurePurchase.update({ where: { id }, data: { deletedAt: new Date() } });
+  res.json({ message: 'Compra removida logicamente' });
 });
 
 export default router;

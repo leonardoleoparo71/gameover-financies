@@ -18,7 +18,7 @@ const UpdateGoalSchema = GoalSchema.partial();
 // GET /goals
 router.get('/', async (req: AuthRequest, res: Response) => {
   const goals = await prisma.goal.findMany({
-    where: { userId: req.userId! },
+    where: { userId: req.userId!, deletedAt: null },
     orderBy: { createdAt: 'desc' },
     take: 100, // Clamp
   });
@@ -51,7 +51,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 // PUT /goals/:id
 router.put('/:id', async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  const existing = await prisma.goal.findFirst({ where: { id, userId: req.userId! } });
+  const existing = await prisma.goal.findFirst({ where: { id, userId: req.userId!, deletedAt: null } });
   if (!existing) { res.status(404).json({ error: 'Meta não encontrada' }); return; }
 
   try {
@@ -78,11 +78,11 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
 // DELETE /goals/:id
 router.delete('/:id', async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  const existing = await prisma.goal.findFirst({ where: { id, userId: req.userId! } });
+  const existing = await prisma.goal.findFirst({ where: { id, userId: req.userId!, deletedAt: null } });
   if (!existing) { res.status(404).json({ error: 'Meta não encontrada' }); return; }
 
-  await prisma.goal.delete({ where: { id } });
-  res.json({ message: 'Meta removida' });
+  await prisma.goal.update({ where: { id }, data: { deletedAt: new Date() } });
+  res.json({ message: 'Meta removida logicamente' });
 });
 
 export default router;

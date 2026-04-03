@@ -13,10 +13,25 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   const start = new Date(year, month - 1, 1);
   const end = new Date(year, month, 1);
 
-  const [transactions, purchases, goals, prevSnapshot, user] = await Promise.all([
-    prisma.transaction.findMany({ where: { userId: req.userId!, date: { gte: start, lt: end } } }),
-    prisma.futurePurchase.findMany({ where: { userId: req.userId! } }),
-    prisma.goal.findMany({ where: { userId: req.userId! } }),
+  const [sumIncome, sumExpense, sumLeisure, hasTransactions, purchases, goals, prevSnapshot, user] = await Promise.all([
+    prisma.transaction.aggregate({
+      _sum: { amount: true },
+      where: { userId: req.userId!, type: 'income', date: { gte: start, lt: end }, deletedAt: null }
+    }),
+    prisma.transaction.aggregate({
+      _sum: { amount: true },
+      where: { userId: req.userId!, type: 'expense', date: { gte: start, lt: end }, deletedAt: null }
+    }),
+    prisma.transaction.aggregate({
+      _sum: { amount: true },
+      where: { userId: req.userId!, type: 'expense', category: 'leisure', date: { gte: start, lt: end }, deletedAt: null }
+    }),
+    prisma.transaction.findFirst({
+      where: { userId: req.userId!, date: { gte: start, lt: end }, deletedAt: null },
+      select: { id: true }
+    }),
+    prisma.futurePurchase.findMany({ where: { userId: req.userId!, deletedAt: null } }),
+    prisma.goal.findMany({ where: { userId: req.userId!, deletedAt: null } }),
     prisma.monthlySnapshot.findFirst({
       where: { userId: req.userId!, OR: [{ month: month - 1, year }, { month: 12, year: year - 1 }] },
       orderBy: [{ year: 'desc' }, { month: 'desc' }],
@@ -24,23 +39,21 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     prisma.user.findUnique({ where: { id: req.userId! }, select: { salary: true } }),
   ]);
 
-  const transactionsIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const transactionsIncome = sumIncome._sum.amount || 0;
+  const totalExpense = sumExpense._sum.amount || 0;
+  const leisureExpense = sumLeisure._sum.amount || 0;
+
   const totalIncome = transactionsIncome + (user?.salary || 0);
-  const totalExpense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
   const pendingPurchases = purchases.filter(p => !p.purchased);
   const totalPurchasesCost = pendingPurchases.reduce((s, p) => s + p.value, 0);
   const saved = totalIncome - totalExpense;
   const savingsRate = totalIncome > 0 ? (saved / totalIncome) * 100 : 0;
   const spendRate = totalIncome > 0 ? (totalExpense / totalIncome) * 100 : 0;
 
-  const leisureExpense = transactions
-    .filter(t => t.type === 'expense' && t.category === 'leisure')
-    .reduce((s, t) => s + t.amount, 0);
-
   const insights: string[] = [];
 
   // No data this month
-  if (transactions.length === 0) {
+  if (!hasTransactions) {
     insights.push('Você ainda não registrou nenhuma transação nesse mês.');
   }
 
