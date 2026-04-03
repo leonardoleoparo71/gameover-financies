@@ -122,7 +122,7 @@ export default function DashboardClient({ initialSummary, initialSnapshots }: { 
             {loading ? <span className="skeleton" style={{ width: '180px', height: '14px', display: 'inline-block' }} /> : `Visão geral de ${MONTH_NAMES[(summary?.month ?? 1) - 1]} ${summary?.year}`}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div className="header-actions">
           <button className="btn btn-secondary btn-sm" onClick={exportPDF} disabled={exporting || loading}>
             {exporting ? '⏳ Gerando...' : '📄 Exportar PDF'}
           </button>

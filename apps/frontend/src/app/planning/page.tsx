@@ -167,7 +167,9 @@ export default function PlanningPage() {
           <h1 className="page-title">Árvore de Planejamento</h1>
           <p className="page-subtitle">Crie nós, arraste para organizar e conecte para criar dependências.</p>
         </div>
-        <button className="btn btn-primary" onClick={openCreate}>+ Novo Nó</button>
+        <div className="header-actions">
+          <button className="btn btn-primary" onClick={openCreate}>+ Novo Nó</button>
+        </div>
       </div>
 
       <div
@@ -205,7 +207,7 @@ export default function PlanningPage() {
                 <input className="input" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+              <div className="grid-2">
                 <div className="form-group">
                   <label className="form-label">Status</label>
                   <select className="select" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value as any }))}>

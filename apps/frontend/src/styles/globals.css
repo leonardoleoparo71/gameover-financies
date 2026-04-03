@@ -502,6 +502,11 @@ a:hover { color: var(--brand-primary); }
   gap: var(--space-4);
   flex-wrap: wrap;
 }
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
 .page-title { font-size: 1.75rem; font-weight: 800; }
 .page-subtitle { font-size: 0.9rem; color: var(--text-muted); margin-top: var(--space-1); }
 
@@ -590,10 +595,18 @@ a:hover { color: var(--brand-primary); }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .modal { max-width: 100%; margin: var(--space-4); padding: var(--space-6); }
   
+  /* Modal responsive form fields */
+  .modal .grid-2 { grid-template-columns: 1fr; gap: var(--space-3); }
+
   /* Ajuste no BackToTop para mobile */
   [class*="BackToTop"] {
     bottom: var(--space-10) !important;
     right: var(--space-4) !important;
     z-index: 100 !important; /* Abaixo do menu hamburguer aberto */
   }
+
+  /* Page Header Mobile */
+  .page-header { flex-direction: column; align-items: flex-start; gap: var(--space-4); margin-bottom: var(--space-6); }
+  .header-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .header-actions .btn { width: 100%; justify-content: center; }
 }

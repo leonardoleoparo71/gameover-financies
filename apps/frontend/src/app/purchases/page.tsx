@@ -172,7 +172,9 @@ export default function PurchasesPage() {
             {loading ? <span className="skeleton" style={{ width: '120px', height: '14px', display: 'inline-block' }} /> : `${toBuy.length} ${toBuy.length === 1 ? 'item planejado' : 'itens planejados'} · Total: ${fmt(total)}`}
           </p>
         </div>
-        <button className="btn btn-primary" onClick={openCreate} disabled={loading}>+ Nova Compra</button>
+        <div className="header-actions">
+          <button className="btn btn-primary" onClick={openCreate} disabled={loading}>+ Nova Compra</button>
+        </div>
       </div>
 
       {loading ? (

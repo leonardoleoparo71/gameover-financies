@@ -174,7 +174,7 @@ export default function ExpensesPage() {
           <h1 className="page-title">Despesas & Receitas</h1>
           <p className="page-subtitle">Transações de {month.toString().padStart(2,'0')}/{year}</p>
         </div>
-        <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+        <div className="header-actions">
           <button className="btn btn-secondary btn-sm" onClick={saveSnapshot}>
             💾 Salvar Snapshot
           </button>
@@ -302,7 +302,7 @@ export default function ExpensesPage() {
             <div className="modal-body">
               {error && <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 'var(--radius-md)', padding: 'var(--space-3) var(--space-4)', color: 'var(--brand-danger)', fontSize: '0.875rem' }}>{error}</div>}
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+              <div className="grid-2">
                 <div className="form-group">
                   <label className="form-label">Tipo</label>
                   <select className="select" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value as 'income' | 'expense' }))}>
@@ -323,7 +323,7 @@ export default function ExpensesPage() {
                 <input className="input" placeholder="Ex: Salário, Conta de luz..." value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+              <div className="grid-2">
                 <div className="form-group">
                   <label className="form-label">Valor (R$)</label>
                   <input className="input" type="number" min="0" step="0.01" placeholder="0,00" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} />

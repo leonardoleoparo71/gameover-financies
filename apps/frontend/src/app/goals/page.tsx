@@ -109,7 +109,9 @@ export default function GoalsPage() {
           <h1 className="page-title">Metas Financeiras</h1>
           <p className="page-subtitle">{goals.length} {goals.length === 1 ? 'meta definida' : 'metas definidas'}</p>
         </div>
-        <button className="btn btn-primary" onClick={openCreate}>+ Nova Meta</button>
+        <div className="header-actions">
+          <button className="btn btn-primary" onClick={openCreate}>+ Nova Meta</button>
+        </div>
       </div>
 
       {/* Saved banner */}
